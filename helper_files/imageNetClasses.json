@@ -1,0 +1,15 @@
+[
+    {
+        "class":"aeroplane",
+        "imageNetWNIDs": [
+            "n02691156"
+        ]
+    },
+    {
+        "class":"dog",
+        "imageNetWNIDs": [
+            "n02691476",
+            "n02111889"
+        ]
+    }
+]
