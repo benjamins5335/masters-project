@@ -1,0 +1,1 @@
+python3 scripts/txt2img.py --prompt "a photorealistic image of an astronaut riding a horse" --ckpt models/512-base-ema.ckpt --H 512 --W 512 --device cuda --n_samples 50 --f 8
