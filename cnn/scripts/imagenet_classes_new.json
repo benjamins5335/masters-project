@@ -1,0 +1,308 @@
+[
+    {
+        "class":"dog",
+        "wnids": [
+            {
+                "description":"Labrador Retriever",
+                "wnid":"n02099712"
+            },
+            {
+                "description":"German Shephard",
+                "wnid":"n02106662"
+            },
+            {
+                "description":"Siberian Husky",
+                "wnid":"n02110185"
+            },
+            {
+                "description":"Beagle",
+                "wnid":"n02088364"
+            },
+            {
+                "description":"Dalmatian",
+                "wnid":"n02110341"
+            }
+        ]
+    },
+    {
+        "class":"cat",
+        "wnids": [
+            {
+                "description":"Persian Cat",
+                "wnid":"n02123394"
+            },
+            {
+                "description":"Siamese Cat",
+                "wnid":"n02123597"
+            },
+            {
+                "description":"Tabby",
+                "wnid":"n02123045"
+            },
+            {
+                "description":"Egyptian Cat",
+                "wnid":"n02124075"
+            },
+            {
+                "description":"Tiger Cat",
+                "wnid":"n02123159"
+            },
+            
+            
+            "n02123394",
+            "n02123597",
+            "n02123045",
+            "n02124075",
+            "n02123159"   
+        ]
+    },
+    {
+        "class":"automobile",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            
+            "n03895866",
+            "n02814533",
+            "n02930766",
+            "n03100240",
+            "n03594945"
+        ]
+    },
+    {
+        "class":"ship",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n03344393",
+            "n04273569",
+            "n03095699",
+            "n03673027",
+            "n02687172"
+        ]
+    },
+    {
+        "class":"bird",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n01558993",
+            "n01531178",
+            "n01580077",
+            "n01582220",
+            "n01614925"
+        ]
+    },
+    {
+        "class":"primate",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n02480495",
+            "n02481823",
+            "n02483362",
+            "n02480855",
+            "n02493793"
+        ]
+    },
+    {
+        "class":"spider",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n01773157",
+            "n01773549",
+            "n01773797",
+            "n01774384",
+            "n01774750"
+        ]
+    },
+    {
+        "class":"snake",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n01755581",
+            "n01728572",
+            "n01728920",
+            "n01729322",
+            "n01729977"
+        ]
+    },
+    {
+        "class":"crab",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n01978287",
+            "n01978455",
+            "n01980166",
+            "n01981276",
+            "n01986214"            
+        ]
+    },
+    {
+        "class":"beetle",
+        "wnids": [
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            {
+                "description":"",
+                "wnid":""
+            },
+            
+            "n02165105",
+            "n02167151",
+            "n02168699",
+            "n02172182",
+            "n02177972"
+        ]
+    }
+]
