@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import random
 from diffusers import StableDiffusionXLPipeline
@@ -22,153 +23,11 @@ def generate_image(pipe, prompt):
     return image 
 
 
-def generate_all_images():
-    all_prompts = [
-        {
-            "class": "dog",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "labrador retriever dog",
-                "german shepherd dog",
-                "siberian husky dog",
-                "beagle dog",
-                "dalmatian dog"
-            ],
-            "variations": [
-                "running","jumping","playing","sleeping","eating","inside","outside"
-            ]
-            
-        },
-        {
-            "class": "cat",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "persian cat",
-                "siamese cat",
-                "tabby cat",
-                "egyptian mau cat",
-                "tiger cat"
-            ],
-            "variations": [
-                "lying down","standing","sleeping","eating","playing","inside","outside"
-            ]
-            
-            
-        },
-        {
-            "class": "car",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "passenger car",
-                "estate car",
-                "taxi",
-                "convertible car",
-                "jeep"
-            ],
-            "variations": [
-                "parked","driving","inside","outside","front","back"
-            ]
-        },
-        {
-            "class": "ship",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "fireboat",
-                "speedboat",
-                "container ship",
-                "ocean liner",
-                "aircraft carrier"
-            ],
-            "variations": [
-                "docked","sailing","outside","front","back"
-            ]
-        },
-        {
-            "class": "bird",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "robin",
-                "goldfinch",
-                "jay bird",
-                "magpie",
-                "bald eagle"
-            ],
-            "variations": [
-                "flying","perched","eating","outside","in nest"
-            ]
-        },
-        {
-            "class": "primate",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "orangutan",
-                "chimpanzee",
-                "gibbon",
-                "gorilla",
-                "spider monkey"
-            ],
-            "variations": [
-                "lying down","standing","sleeping","eating","playing","inside","outside"
-            ]
-        },
-        {
-            "class": "spider",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "black and gold garden spider",
-                "barn spider",
-                "garden spider",
-                "black widow",
-                "tarantula"
-            ],
-            "variations": [
-                "on web","eating","inside","outside"
-            ]
-        },
-        {
-            "class": "snake",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "diamondback rattlesnake",
-                "thunder snake",
-                "ringneck snake",
-                "hognose snake",
-                "green snake"
-            ],
-            "variations": [
-                "lying down","curling up","eating","inside","outside","in water","on land","on rock"
-            ]
-        },
-        {
-            "class": "crab",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "dungeness crab",
-                "rock crab",
-                "fiddler crab",
-                "king crab",
-                "hermit crab"
-            ],
-            "variations": [
-                "on sea floor","on rock","in tank","in bowl","being held by human","on sand","submerged"
-            ]
-        },
-        {
-            "class": "beetle",
-            "prompt": "A photo of a {}, real-life setting.",
-            "subclasses": [
-                "tiger beetle",
-                "ground beetle",
-                "long-horned beetle",
-                "dung beetle",
-                "weevil"
-            ],
-            "variations": [
-                "on rock","on leaf","on ground","on tree","on branch","on grass","on sand"
-            ]
-        }
-    ]
+def generate_all_images():   
+    all_prompts = json.load(open("imagenet_classes.json"))
+    print(all_prompts)
     
+    stop = input("Enter 'y' to stop entering prompts: ")
     
     pipe = StableDiffusionXLPipeline.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", 
@@ -188,12 +47,13 @@ def generate_all_images():
         image_class = class_obj["class"]
         image_prompt = class_obj["prompt"]
         variations = class_obj["variations"]
+        subclasses = [item['description'] for item in class_obj['wnids']]
         
         # create folder for class in ../data/fake if it doesn't exist
         Path(f"../data/fake/{image_class}").mkdir(parents=True, exist_ok=True)
         
 
-        for subclass in class_obj["subclasses"]:
+        for subclass in subclasses:
             for i in range(images_per_subclass):
                 prompt = image_prompt.format(subclass) + ", " + random.choice(variations)
                 image = generate_image(pipe, prompt)
@@ -218,7 +78,6 @@ def test_function():
 
 
 if __name__ == "__main__":
-    # generate_all_images()
+    generate_all_images()
     
-    test_function()
     
