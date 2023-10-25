@@ -26,16 +26,13 @@ def generate_image(pipe, prompt):
 def generate_all_images():   
     all_prompts = json.load(open("imagenet_classes.json"))
     print(all_prompts)
-    
-    stop = input("Enter 'y' to stop entering prompts: ")
-    
+        
     pipe = StableDiffusionXLPipeline.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", 
         torch_dtype=torch.float16, 
         variant="fp16", 
         use_safetensors=True
     ).to("cuda")
-    
 
     pipe.enable_xformers_memory_efficient_attention()
 
