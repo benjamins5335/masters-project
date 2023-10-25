@@ -166,4 +166,5 @@ stablediffusion/.idea/
 stablediffusion/.vscode/
 
 cnn/data/
+raw_image_data/
 cnn/scripts/test.jpeg
