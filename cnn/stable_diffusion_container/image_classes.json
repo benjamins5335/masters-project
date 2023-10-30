@@ -1,0 +1,294 @@
+[
+    {
+        "class":"dog",
+        "wnids": [
+            {
+                "description":"labrador retriever",
+                "wnid":"n02099712"
+            },
+            {
+                "description":"german shephard",
+                "wnid":"n02106662"
+            },
+            {
+                "description":"siberian husky",
+                "wnid":"n02110185"
+            },
+            {
+                "description":"beagle",
+                "wnid":"n02088364"
+            },
+            {
+                "description":"dalmatian",
+                "wnid":"n02110341"
+            }
+        ],
+        "prompt": "A photo of a {} dog, real-life setting.",
+        "variations": [
+            "running","jumping","playing","sleeping","eating","inside",
+            "outside", "from side", "from back"
+        ]
+    },
+    {
+        "class":"cat",
+        "wnids": [
+            {
+                "description":"persian cat",
+                "wnid":"n02123394"
+            },
+            {
+                "description":"siamese cat",
+                "wnid":"n02123597"
+            },
+            {
+                "description":"tabby",
+                "wnid":"n02123045"
+            },
+            {
+                "description":"egyptian cat",
+                "wnid":"n02124075"
+            },
+            {
+                "description":"tiger cat",
+                "wnid":"n02123159"
+            }  
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "lying down","standing","sleeping","eating","playing",
+            "inside","outside", "from side", "from back"
+        ]
+    },
+    {
+        "class":"car",
+        "wnids": [
+            {
+                "description":"sports car",
+                "wnid":"n04285008"
+            },
+            {
+                "description":"estate car",
+                "wnid":"n02814533"
+            },
+            {
+                "description":"taxi",
+                "wnid":"n02930766"
+            },
+            {
+                "description":"convertible",
+                "wnid":"n03100240"
+            },
+            {
+                "description":"jeep",
+                "wnid":"n03594945"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "parked","driving","inside","outside","front","back","side","above"
+        ]
+    },
+    {
+        "class":"ship",
+        "wnids": [
+            {
+                "description":"fireboat",
+                "wnid":"n03344393"
+            },
+            {
+                "description":"speedboat",
+                "wnid":"n04273569"
+            },
+            {
+                "description":"container ship",
+                "wnid":"n03095699"
+            },
+            {
+                "description":"ocean liner",
+                "wnid":"n03673027"
+            },
+            {
+                "description":"aircraft carrier",
+                "wnid":"n02687172"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "docked","sailing","outside","front","back","side","above"
+        ]
+    },
+    {
+        "class":"bird",
+        "wnids": [
+            {
+                "description":"robin",
+                "wnid":"n01558993"
+            },
+            {
+                "description":"goldfinch",
+                "wnid":"n01531178"
+            },
+            {
+                "description":"jay",
+                "wnid":"n01580077"
+            },
+            {
+                "description":"magpie",
+                "wnid":"n01582220"
+            },
+            {
+                "description":"bald eagle",
+                "wnid":"n01614925"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "flying","perched","eating","outside","in nest","side","above"
+        ]
+    },
+    {
+        "class":"primate",
+        "wnids": [
+            {
+                "description":"ornagutan",
+                "wnid":"n02480495"
+            },
+            {
+                "description":"chimpanzee",
+                "wnid":"n02481823"
+            },
+            {
+                "description":"gibbon",
+                "wnid":"n02483362"
+            },
+            {
+                "description":"gorilla",
+                "wnid":"n02480855"
+            },
+            {
+                "description":"spider monkey",
+                "wnid":"n02493793"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "lying down","standing","sleeping","eating","playing","inside","outside","side","above"
+        ]
+    },
+    {
+        "class":"spider",
+        "wnids": [
+            {
+                "description":"black and gold garden spider",
+                "wnid":"n01773157"
+            },
+            {
+                "description":"barn spider",
+                "wnid":"n01773549"
+            },
+            {
+                "description":"garden spider",
+                "wnid":"n01773797"
+            },
+            {
+                "description":"black widow",
+                "wnid":"n01774384"
+            },
+            {
+                "description":"tarantula",
+                "wnid":"n01774750"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "on web","inside","outside","side","above","making web"
+        ]
+    },
+    {
+        "class":"snake",
+        "wnids": [
+            {
+                "description":"diamondback rattlesnake",
+                "wnid":"n01755581"
+            },
+            {
+                "description":"thunder snake",
+                "wnid":"n01728572"
+            },
+            {
+                "description":"ringneck snake",
+                "wnid":"n01728920"
+            },
+            {
+                "description":"hognose snake",
+                "wnid":"n01729322"
+            },
+            {
+                "description":"green snake",
+                "wnid":"n01729977"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "lying down","curling up","eating","inside","outside","in water","on land","on rock","side","above"
+        ]
+    },
+    {
+        "class":"crab",
+        "wnids": [
+            {
+                "description":"dungeness crab",
+                "wnid":"n01978287"
+            },
+            {
+                "description":"rock crab",
+                "wnid":"n01978455"
+            },
+            {
+                "description":"fiddler crab",
+                "wnid":"n01980166"
+            },
+            {
+                "description":"king crab",
+                "wnid":"n01981276"
+            },
+            {
+                "description":"hermit crab",
+                "wnid":"n01986214"
+            }         
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "on sea floor","on rock","in tank","in bowl","being held by human","on sand","submerged","side","above"
+        ]
+    },
+    {
+        "class":"beetle",
+        "wnids": [
+            {
+                "description":"tiger beetle",
+                "wnid":"n02165105"
+            },
+            {
+                "description":"ground beetle",
+                "wnid":"n02167151"
+            },
+            {
+                "description":"long-horned beetle",
+                "wnid":"n02168699"
+            },
+            {
+                "description":"dung beetle",
+                "wnid":"n02172182"
+            },
+            {
+                "description":"weevil",
+                "wnid":"n02177972"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "on rock","on leaf","on ground","on tree","on branch","on grass","on sand","side","above"
+        ]
+    }
+]
