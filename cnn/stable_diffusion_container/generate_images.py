@@ -111,7 +111,7 @@ def generate_image_from_class(chosen_class):
             total_subclasses = len(subclasses)
             total_images = total_subclasses * images_per_subclass
             
-            class_folder = Path(f"../data/fake/{chosen_class}")
+            class_folder = Path(f"data/fake/{chosen_class}")
             class_folder.mkdir(parents=True, exist_ok=True)
             
         
