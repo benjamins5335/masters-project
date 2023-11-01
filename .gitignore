@@ -168,5 +168,6 @@ stablediffusion/.vscode/
 cnn/data/
 raw_image_data/
 cnn/scripts/test.jpeg
+cnn/stable_diffusion_container/data
 
 .venv
