@@ -7,4 +7,4 @@ COPY . /app
 RUN pip install --upgrade pip
 RUN pip install -r requirements.txt
 
-CMD ["python", "generate_images.py"]
+ENTRYPOINT ["python", "generate_images.py"]
