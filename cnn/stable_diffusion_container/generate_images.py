@@ -44,7 +44,7 @@ def generate_all_images():
         subclasses = [item['description'] for item in class_obj['wnids']]
         
         # create folder for class in ../data/fake if it doesn't exist
-        class_folder = Path(f"../data/fake/{image_class}")
+        class_folder = Path(f"data/fake/{image_class}")
         class_folder.mkdir(parents=True, exist_ok=True)
         
         # shuffle subclasses
