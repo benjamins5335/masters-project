@@ -22,7 +22,7 @@ class BinaryClassifier(nn.Module):
             nn.Flatten(),
             nn.Linear(64 * 24 * 24, 128),  # adjusted for 96x96 input images
             nn.ReLU(),
-            nn.Linear(128, 2),
+            nn.Linear(128, 1),
         )
 
     
