@@ -49,8 +49,8 @@
                 "wnid":"n02124075"
             },
             {
-                "description":"tiger cat",
-                "wnid":"n02123159"
+                "description":"tiger",
+                "wnid":"n02129604"
             }  
         ],
         "prompt": "A photo of a {}, real-life setting.",
@@ -150,7 +150,7 @@
         "class":"primate",
         "wnids": [
             {
-                "description":"ornagutan",
+                "description":"orangutan",
                 "wnid":"n02480495"
             },
             {
