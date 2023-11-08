@@ -1,7 +1,7 @@
 PROJECT_NAME = gen-sd-image
 CLASSES = cat car
 
-all: venv docker_run_multiple
+all: venv docker_run
 
 venv:
 	python3 -m venv .venv
@@ -15,7 +15,7 @@ docker_run:
 	--ulimit memlock=-1 \
 	--ulimit stack=67108864 \
 	-v /home/bs214/cs5199/cnn/stable_diffusion_container/data:/app/data \
-	-it $(PROJECT_NAME) cat
+	-it $(PROJECT_NAME)
 
 docker_run_multiple:
 	@for class in $(CLASSES); do echo "Starting container for $$class..."; \
