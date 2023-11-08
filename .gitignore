@@ -171,3 +171,6 @@ cnn/scripts/test.jpeg
 cnn/stable_diffusion_container/data
 
 .venv
+
+data_bup
+data_bup_copy
