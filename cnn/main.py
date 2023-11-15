@@ -51,7 +51,7 @@ def train_cnn():
     # Initialize model, loss function, and optimizer
     model = BinaryClassifier()
     loss_fn = nn.BCEWithLogitsLoss()
-    optimizer = optim.Adam(model.parameters(), lr=0.001)
+    optimizer = optim.Adam(model.parameters(), lr=0.0001)
     
 
     model = model.to(device)
@@ -130,5 +130,5 @@ def inference_cnn():
     print(f'Predicted: {predicted}')
     
 if __name__ == '__main__':
-    # train_cnn()
-    inference_cnn()
+    train_cnn()
+    # inference_cnn()
