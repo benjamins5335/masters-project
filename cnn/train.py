@@ -17,15 +17,18 @@ from torchvision.datasets import ImageFolder
 from models.binary_classifier import BinaryClassifier
 from PIL import Image
 
+# import evaluate.py
+from evaluate import evaluate
 
-def train(model, train_loader, val_loader, test_loader, num_epochs=10, lr=0.0001, device='cuda'):
+
+
+def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cuda'):
     """
     Trains a convolutional neural network on a binary classification task.
 
     Args:
     - model: The model to be trained
     - train_loader: DataLoader for training data
-    - test_loader: DataLoader for testing data
     - num_epochs: Number of training epochs
     - lr: Learning rate for the optimizer
     - device: Device to use for training ('cuda' or 'cpu')
@@ -84,9 +87,10 @@ def train(model, train_loader, val_loader, test_loader, num_epochs=10, lr=0.0001
         
         print(f'Train loss: {train_loss / len(train_loader.dataset)}')
         print(f'Train accuracy: {train_acc / len(train_loader.dataset)}')
-        print()
         print(f'Validation loss: {val_loss}')
         print(f'Validation accuracy: {val_acc}')
+        print()
+
 
     # Save model
     torch.save(model.state_dict(), 'model.pth')
@@ -100,10 +104,6 @@ if __name__ == '__main__':
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    # full_ds = ImageFolder(root='data', transform=data_transforms)
-    # train_size = int(0.8 * len(full_ds))
-    # test_size = len(full_ds) - train_size
-    # train_ds, test_ds = torch.utils.data.random_split(full_ds, [train_size, test_size])
     
     train_ds = ImageFolder(root='data/train', transform=data_transforms)
     test_ds = ImageFolder(root='data/test', transform=data_transforms)
@@ -116,12 +116,10 @@ if __name__ == '__main__':
 
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
-    test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
-
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Initialize model
     model = BinaryClassifier()
 
     # Train the model
-    train(model, train_loader, val_loader, test_loader, num_epochs=10, lr=0.0001, device=device)
+    train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device=device)
