@@ -1,37 +1,58 @@
+import random
 import cv2
 import os
 import argparse
 import time
 from collections import defaultdict
 
-def downsample(base_path):
-    print(f'Processing images in {base_path}...')
+
+def downsample_and_save(file_path, img, width, height):
+    crop_size = min(width, height)
+    left = (width - crop_size) // 2
+    right = left + crop_size
+    top = (height - crop_size) // 2
+    bottom = top + crop_size
     
-    for root, dirs, files in os.walk(base_path):
+    img = img[top:bottom, left:right]
+    
+    img = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR)
+    
+    cv2.imwrite(file_path, img)
+    
+    
+    
+def write_1000_fake(input_dir, output_dir):
+    
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+        
+    print(f'Processing images in {input_dir}...')
+    
+    for root, dirs, files in os.walk(input_dir):
+        print(root)
+        print(dirs)
+        print(files[:10])
         
         for file in files:
-            
+            # get current dir
+            subclass = root.split('/')[-1]
+
+            # create dir if it doesn't exist
+            if not os.path.exists(os.path.join(output_dir, subclass)):
+                os.mkdir(os.path.join(output_dir, subclass))
+                
             if file.endswith('.JPEG') or file.endswith('.jpg') or file.endswith('.png') or file.endswith('.jpeg'):
-                print(f'Processing {file}...')
-                file_path = os.path.join(root, file)
-                img = cv2.imread(file_path)
+                
+                input_file_path = os.path.join(root, file)
+                output_file_path = os.path.join(output_dir, subclass, file)
+                
+                img = cv2.imread(input_file_path)
                 
                 height, width = img.shape[:2]
-                if width < 96 or height < 96:
-                    os.remove(file_path)
-                    
-                elif width > 96 or height > 96:
-                    crop_size = min(width, height)
-                    left = (width - crop_size) // 2
-                    right = left + crop_size
-                    top = (height - crop_size) // 2
-                    bottom = top + crop_size
-                    
-                    img = img[top:bottom, left:right]
-                    
-                    img = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR)
-                    
-                    cv2.imwrite(file_path, img)
+                if width >= 96 or height >= 96:
+                    downsample_and_save(output_file_path, img, width, height)
+                    print(f'Saved {output_file_path}')
+
                
 
 
@@ -86,58 +107,128 @@ def choose_1000_real(base_path):
     
     return number_to_download
 
-def write_1000_real(base_path, number_to_download):
-    output_path = base_path + '/real_new'
-    # make directory for output
-    if not os.path.exists(output_path):
-        os.mkdir(output_path)
+def write_1000_real(input_dir, output_dir, number_to_download):
+    
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
+
     # iterate through every file in dir
-    for root, dirs, files in os.walk(base_path + '/real'):
-        for dir in dirs:
-            # make dir for class
-            if not os.path.exists(os.path.join(output_path, dir)):
-                os.mkdir(os.path.join(output_path, dir))
+    for root, dirs, files in os.walk(input_dir): # data_raw/real
+        for dir in dirs: # cat, dog, etc.
+            if not os.path.exists(os.path.join(output_dir, dir)): # data/real/{cat, dog, etc.}
+                os.mkdir(os.path.join(output_dir, dir))
             number_to_download_class = number_to_download[dir]
-            # iterate through every file in dir
-            files = os.listdir(os.path.join(root, dir))
+            
+
+            files = os.listdir(os.path.join(input_dir, dir))
             for file in files:
                 # print(f'Processing {file}...')
                 if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
+                    input_file_path = os.path.join(input_dir, dir, file)
+                    output_file_path = os.path.join(output_dir, dir, file)                      
+                    
+
                     synset_id = file.split('_')[0]
                     if number_to_download_class[synset_id] > 0:
-                        file_path = os.path.join(root, dir, file)
-                        img = cv2.imread(file_path)
+                        img = cv2.imread(input_file_path)
                         height, width = img.shape[:2]
-                        if width < 96 or height < 96:
-                            os.remove(file_path)
-                            
-                        elif width > 96 or height > 96:
-                            number_to_download_class[synset_id] -= 1
+                        if width >= 96 or height >= 96:
+                            # stop = input('Press enter to continue...')
 
-                            crop_size = min(width, height)
-                            left = (width - crop_size) // 2
-                            right = left + crop_size
-                            top = (height - crop_size) // 2
-                            bottom = top + crop_size
+                            number_to_download_class[synset_id] -= 1
+                            downsample_and_save(output_file_path, img, width, height)
+                            print(f'Saved {output_file_path}')
+                        else:
+                            print(f'{input_file_path} is too small. Skipping...')
                             
-                            img = img[top:bottom, left:right]
-                            
-                            img = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR)
-                            cv2.imwrite(os.path.join(output_path, dir, file), img)
+def separate_into_train_and_test(split_percentage):
+
         
-                  
+        
+    print('Separating into train and test...')
+    for root, dirs, files in os.walk('../data/real'):
+        for dir in dirs:
+            print(f'Processing {dir}...')
+            if not os.path.exists(os.path.join('../data', 'train', 'real', dir)):
+                os.makedirs(os.path.join('../data', 'train', 'real', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('../data', 'test', 'real', dir)):
+                os.makedirs(os.path.join('../data', 'test', 'real', dir), exist_ok=True)
+        
+                
+            files = os.listdir(os.path.join(root, dir))
+            
+            random.shuffle(files)
+            
+            train_size = int(split_percentage * len(files))
+            test_size = len(files) - train_size
+            print(files[:10])
+            
+            count = 0
+            for file in files: 
+                if count < split_percentage * len(files):
+                    mode = 'train'
+                else:
+                    mode = 'test'
+                        
+                old_path = os.path.join(root, dir, file)
+                new_path = os.path.join("../data", mode, "real", dir, file)
+                
+                
+                
+                os.rename(old_path, new_path)
+                print(f'Moved {new_path}')
+                count += 1
+                
+
+                
+    for root, dirs, files in os.walk('../data/fake'):
+        for dir in dirs:
+            print(f'Processing {dir}...')
+            if not os.path.exists(os.path.join('../data', 'train', 'fake', dir)):
+                os.makedirs(os.path.join('../data', 'train', 'fake', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('../data', 'test', 'fake', dir)):
+                os.makedirs(os.path.join('../data', 'test', 'fake', dir), exist_ok=True)
+        
+                
+            files = os.listdir(os.path.join(root, dir))
+            
+            random.shuffle(files)
+            
+            train_size = int(split_percentage * len(files))
+            test_size = len(files) - train_size
+            print(files[:10])
+            
+            count = 0
+            for file in files: 
+                if count < split_percentage * len(files):
+                    mode = 'train'
+                else:
+                    mode = 'test'
+                        
+                old_path = os.path.join(root, dir, file)
+                new_path = os.path.join("../data", mode, "fake", dir, file)
+                
+                
+                
+                os.rename(old_path, new_path)
+                print(f'Moved {new_path}')
+                count += 1
+            
+            
 if __name__ == "__main__":
     print('Starting preprocessing...')
-    parser = argparse.ArgumentParser(description='Process images in a directory.')
-    parser.add_argument('base_path', type=str, help='Path to the base directory containing images to process.', default='../data')
-    args = parser.parse_args()
+    # parser = argparse.ArgumentParser(description='Process images in a directory.')
+    # parser.add_argument('base_path', type=str, help='Path to the base directory containing images to process.', default='../data_raw')
+    # args = parser.parse_args()
     
-    path = args.base_path
+    input_dir = '../data_raw'
+    output_dir = '../data'
     
-    # number_to_download = choose_1000_real(path)
-    # write_1000_real(path, number_to_download)
-    downsample(path)
-    
+    number_to_download = choose_1000_real(input_dir)
+    write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
+    write_1000_fake(input_dir + "/fake", output_dir + "/fake")
+    separate_into_train_and_test(0.8)
     
     
 
