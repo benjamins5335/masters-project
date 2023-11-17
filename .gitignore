@@ -166,6 +166,9 @@ stablediffusion/.idea/
 stablediffusion/.vscode/
 
 cnn/data/
+cnn/data_copy/
+cnn/data_raw/
+
 __pycache__/
 raw_image_data/
 cnn/scripts/test.jpeg
