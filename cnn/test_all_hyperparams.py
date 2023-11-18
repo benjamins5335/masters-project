@@ -28,13 +28,12 @@ def test_all_hyperparams():
     Test all hyperparameters for the CNN model.
     """
 
-    # Define the hyperparameters to test
     param_grid = {
         'lr': [0.00001, 0.0001, 0.001, 0.01, 'schedule'],
         'batch_size': [16, 32, 64],
         'epochs': [10, 30, 50],
         'weight_decay': [0.0001, 0.001, 0.01],
-        'dropout': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
+        'dropout': [0.0, 0.2, 0.4]
     }
     
     data_transforms = transforms.Compose([

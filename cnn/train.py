@@ -145,14 +145,7 @@ if __name__ == '__main__':
     if not os.path.exists('plots'):
         os.makedirs('plots')
         
-    
-    param_grid = {
-        'lr': [0.00001, 0.0001, 0.001, 0.01, 'schedule'],
-        'batch_size': [16, 32, 64],
-        'epochs': [10, 30, 50],
-        'weight_decay': [0.0001, 0.001, 0.01],
-        'dropout': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
-    }
+
         
     # Add arguments
     parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
