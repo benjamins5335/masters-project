@@ -20,6 +20,7 @@ from PIL import Image
 import json
 import sys
 import os
+import argparse
 
 def evaluate(model, data_loader, device='cuda'):
     """
@@ -56,17 +57,19 @@ def evaluate(model, data_loader, device='cuda'):
 
 
 if __name__ == '__main__':
-    # use argparse to get command line arguments
-    try:
-        eval_whole_set = sys.argv[1].lower() == 'true'
-    except IndexError:
-        eval_whole_set = True
-
-    try:
-        eval_subclasses = sys.argv[2].lower() == 'true'
-    except IndexError:
-        eval_subclasses = False
+    parser = argparse.ArgumentParser(description="Evaluate a trained model.")
     
+    # Add arguments
+    parser.add_argument('--eval_whole_set', action='store_true', help='Evaluate the whole dataset')
+    parser.add_argument('--eval_subclasses', action='store_true', help='Evaluate subclasses')
+
+    # Parse the arguments
+    args = parser.parse_args()
+    eval_whole_set = args.eval_whole_set
+    eval_subclasses = args.eval_subclasses
+    
+    if not eval_whole_set and not eval_subclasses:
+        eval_whole_set = True
 
     
     BATCH_SIZE = 16
