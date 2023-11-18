@@ -22,10 +22,11 @@ from evaluate import evaluate
 import os
 import argparse
 import plotly.graph_objects as go
+from sklearn.model_selection import GridSearchCV
 
 
 
-def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cuda', continue_training=False):
+def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.0001, weight_decay=0.0, device='cuda', continue_training=False):
     """
     Trains a convolutional neural network on a binary classification task.
 
@@ -40,12 +41,7 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
     None
     """
     
-    # implement grid search for hyperparameter tuning
-    # define the grid search parameters
-    batch_size = [16, 32, 64]
-    epochs = [10, 20, 30]
-    learning_rate = [0.0001, 0.001, 0.01]
-    
+
     
     # Set device
     model = model.to(device)
@@ -60,13 +56,15 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
     val_acc_history = []
     
     if continue_training:
-        if os.path.isfile('model.pth'):
-            model.load_state_dict(torch.load('model.pth'))
-            print('Loaded model.pth')
+        if os.path.isfile('{}.pth'.format(model_file_name)):
+            print('pth file found. Loading model.')
+            model.load_state_dict(torch.load('{}.pth'.format(model_file_name)))
         else:
             print('model.pth not found. Training from scratch.')
 
-    
+    if lr == 'schedule':
+        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, patience=5, factor=0.1, verbose=True)
 
     for epoch in range(num_epochs):
         print(f'Epoch: {epoch + 1}/{num_epochs}')
@@ -91,9 +89,12 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
         train_loss_history.append(avg_train_loss)
         train_acc_history.append(avg_train_acc)
         
-        val_loss, val_acc = evaluate(model, val_loader, device)
+        val_loss, val_acc, _ = evaluate(model, val_loader, device)
         val_loss_history.append(val_loss)
         val_acc_history.append(val_acc)
+        
+        if lr == 'schedule':
+            scheduler.step(val_loss)
         
         
         print(f'Train loss: {train_loss / len(train_loader.dataset)}')
@@ -104,7 +105,7 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
 
 
     # Save model
-    torch.save(model.state_dict(), 'model.pth')
+    torch.save(model.state_dict(), 'models/{}.pth'.format(model_file_name))
     
 
     return train_loss_history, train_acc_history, val_loss_history, val_acc_history
@@ -128,14 +129,12 @@ def plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_his
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=train_loss_history, mode='lines+markers', name='Training Loss'))
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=val_loss_history, mode='lines+markers', name='Validation Loss'))
     fig.update_layout(title='Loss vs. Epochs', xaxis_title='Epoch', yaxis_title='Loss')
-    fig.show()
     fig.write_image("plots/loss_vs_epochs.png")
     
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=train_acc_history, mode='lines+markers', name='Training Accuracy'))
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=val_acc_history, mode='lines+markers', name='Validation Accuracy'))
     fig.update_layout(title='Accuracy vs. Epochs', xaxis_title='Epoch', yaxis_title='Accuracy')
-    fig.show()
     # save the plot
     fig.write_image("plots/accuracy_vs_epochs.png")
                  
@@ -143,9 +142,18 @@ def plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_his
                  
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluate a trained model.")
-    os.mkdir('plots')
-
+    if not os.path.exists('plots'):
+        os.makedirs('plots')
+        
     
+    param_grid = {
+        'lr': [0.00001, 0.0001, 0.001, 0.01, 'schedule'],
+        'batch_size': [16, 32, 64],
+        'epochs': [10, 30, 50],
+        'weight_decay': [0.0001, 0.001, 0.01],
+        'dropout': [0.0, 0.1, 0.2, 0.3, 0.4, 0.5]
+    }
+        
     # Add arguments
     parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
 
@@ -153,6 +161,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
     continue_training = args.continue_training
     BATCH_SIZE = 16
+    NUM_EPOCHS = 10
+    LEARNING_RATE = 0.0001
 
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
@@ -160,7 +170,6 @@ if __name__ == '__main__':
     ])
 
     train_ds = ImageFolder(root='data/train', transform=data_transforms)
-    test_ds = ImageFolder(root='data/test', transform=data_transforms)
     
     
     # split the training data into training and validation
@@ -180,12 +189,12 @@ if __name__ == '__main__':
         model,
         train_loader,
         val_loader,
-        num_epochs=10,
-        lr=0.0001,
+        num_epochs=NUM_EPOCHS,
+        lr=LEARNING_RATE,
         device=device,
         continue_training=continue_training
     )
     
-    plot_results(10, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
+    plot_results(NUM_EPOCHS, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
     
     
