@@ -19,10 +19,12 @@ from PIL import Image
 
 # import evaluate.py
 from evaluate import evaluate
+import os
+import argparse
 
 
 
-def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cuda'):
+def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cuda', continue_training=False):
     """
     Trains a convolutional neural network on a binary classification task.
 
@@ -55,6 +57,14 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
     train_acc_history = []
     val_loss_history = []
     val_acc_history = []
+    
+    if continue_training:
+        if os.path.isfile('model.pth'):
+            model.load_state_dict(torch.load('model.pth'))
+            print('Loaded model.pth')
+        else:
+            print('model.pth not found. Training from scratch.')
+
     
 
     for epoch in range(num_epochs):
@@ -94,9 +104,20 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
 
     # Save model
     torch.save(model.state_dict(), 'model.pth')
+    
+
+    return train_loss_history, train_acc_history, val_loss_history, val_acc_history
 
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Evaluate a trained model.")
+    
+    # Add arguments
+    parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
+
+    # Parse the arguments
+    args = parser.parse_args()
+    continue_training = args.continue_training
     BATCH_SIZE = 16
 
     data_transforms = transforms.Compose([
@@ -104,7 +125,6 @@ if __name__ == '__main__':
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-    
     train_ds = ImageFolder(root='data/train', transform=data_transforms)
     test_ds = ImageFolder(root='data/test', transform=data_transforms)
     
@@ -122,4 +142,13 @@ if __name__ == '__main__':
     model = BinaryClassifier()
 
     # Train the model
-    train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device=device)
+    train_loss_history, train_acc_history, val_loss_history, val_acc_history = train(
+        model, 
+        train_loader, 
+        val_loader,
+        num_epochs=10, 
+        lr=0.0001,
+        device=device,
+        continue_training=continue_training
+    )
+    
