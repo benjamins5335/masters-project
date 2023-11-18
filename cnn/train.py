@@ -21,6 +21,7 @@ from PIL import Image
 from evaluate import evaluate
 import os
 import argparse
+import plotly.graph_objects as go
 
 
 
@@ -109,8 +110,41 @@ def train(model, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cud
     return train_loss_history, train_acc_history, val_loss_history, val_acc_history
 
 
+def plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history):
+    """
+    Plots the training and validation loss and accuracy for each epoch.
+
+    Args:
+    - num_epochs: Number of epochs
+    - train_loss_history: List containing the training loss for each epoch
+    - train_acc_history: List containing the training accuracy for each epoch
+    - val_loss_history: List containing the validation loss for each epoch
+    - val_acc_history: List containing the validation accuracy for each epoch
+
+    Returns:
+    None
+    """
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=train_loss_history, mode='lines+markers', name='Training Loss'))
+    fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=val_loss_history, mode='lines+markers', name='Validation Loss'))
+    fig.update_layout(title='Loss vs. Epochs', xaxis_title='Epoch', yaxis_title='Loss')
+    fig.show()
+    fig.write_image("plots/loss_vs_epochs.png")
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=train_acc_history, mode='lines+markers', name='Training Accuracy'))
+    fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=val_acc_history, mode='lines+markers', name='Validation Accuracy'))
+    fig.update_layout(title='Accuracy vs. Epochs', xaxis_title='Epoch', yaxis_title='Accuracy')
+    fig.show()
+    # save the plot
+    fig.write_image("plots/accuracy_vs_epochs.png")
+                 
+                 
+                 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluate a trained model.")
+    os.mkdir('plots')
+
     
     # Add arguments
     parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
@@ -143,12 +177,15 @@ if __name__ == '__main__':
 
     # Train the model
     train_loss_history, train_acc_history, val_loss_history, val_acc_history = train(
-        model, 
-        train_loader, 
+        model,
+        train_loader,
         val_loader,
-        num_epochs=10, 
+        num_epochs=10,
         lr=0.0001,
         device=device,
         continue_training=continue_training
     )
+    
+    plot_results(10, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
+    
     

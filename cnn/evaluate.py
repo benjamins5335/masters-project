@@ -21,6 +21,7 @@ import json
 import sys
 import os
 import argparse
+import plotly.figure_factory as ff
 
 def evaluate(model, data_loader, device='cuda'):
     """
@@ -38,6 +39,11 @@ def evaluate(model, data_loader, device='cuda'):
     loss_fn = nn.BCEWithLogitsLoss()
     test_loss = 0
     test_acc = 0
+    true_positives = 0
+    true_negatives = 0
+    false_positives = 0
+    false_negatives = 0
+    
     with torch.no_grad():
         for images, labels in data_loader:
             images = images.to(device)
@@ -46,17 +52,58 @@ def evaluate(model, data_loader, device='cuda'):
             loss = loss_fn(outputs, labels)
             test_loss += loss.item()
             predicted = torch.round(torch.sigmoid(outputs))
+            
+            true_positives += ((predicted == 1) & (labels == 1)).sum().item()
+            true_negatives += ((predicted == 0) & (labels == 0)).sum().item()
+            false_positives += ((predicted == 1) & (labels == 0)).sum().item()
+            false_negatives += ((predicted == 0) & (labels == 1)).sum().item()
+            
             test_acc += (predicted == labels).sum().item()
     
+    confusion_matrix_data = [
+        [true_positives, false_positives],
+        [false_negatives, true_negatives]
+    ]
+        
+
     avg_test_loss = test_loss / len(data_loader.dataset)
     avg_test_acc = test_acc / len(data_loader.dataset)
 
     
-    return avg_test_loss, avg_test_acc
+    return avg_test_loss, avg_test_acc, confusion_matrix_data
 
 
+def create_confusion_matrix(results, name):
+    """
+    Creates a confusion matrix for the model's predictions on the test set. Part 
+    of this code was learnt from: 
+    https://stackoverflow.com/questions/60860121/plotly-how-to-make-an-annotated-confusion-matrix-using-a-heatmap
+    
+    Args:
+    - results: A 2d-array of the model's predictions on the test set.
+    
+
+    """
+    classes = ['Real', 'Fake']
+    x = classes
+    y = classes[::-1]
+    z = results[::-1]
+    
+    # example for z: [[1, 2], [3, 4]]
+    # have 1 in top left, 2 in top right, 3 in bottom left, 4 in bottom right
+    z_text = [[str(y) for y in x] for x in z]
+    
+    
+    fig = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z_text, colorscale='Viridis')
+    
+    fig.update_layout(title='Confusion Matrix', xaxis_title='Actual', yaxis_title='Predicted')
+    
+    fig.write_image(f'plots/{name}_confusion_matrix.png')
 
 if __name__ == '__main__':
+    if not os.path.exists('plots'):
+        os.makedirs('plots')
+        
     parser = argparse.ArgumentParser(description="Evaluate a trained model.")
     
     # Add arguments
@@ -86,10 +133,12 @@ if __name__ == '__main__':
         model.load_state_dict(torch.load('model.pth', map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
         model.to('cuda')  # Move the model to GPU
         model.eval()
-        avg_test_loss, avg_test_acc = evaluate(model, test_loader, device='cuda')
+        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
         
         print(f'Test loss: {avg_test_loss:.4f}')
         print(f'Test accuracy: {avg_test_acc:.4f}')
+        
+        create_confusion_matrix(confusion_matrix_data, 'whole_set')
         
         
 
@@ -123,7 +172,6 @@ if __name__ == '__main__':
             # create a new ImageFolder for the subclass
             subclass_test_ds = ImageFolder(root=f'temp', transform=data_transforms)
             
-            stop = input('stop')
             
             # subclass_test_ds = ImageFolder(root=f'data/test/{subclass}', transform=data_transforms)
             subclass_test_loader = DataLoader(subclass_test_ds, batch_size=BATCH_SIZE, shuffle=False)
@@ -133,7 +181,9 @@ if __name__ == '__main__':
             model.to('cuda')
             model.eval()
             
-            avg_test_loss, avg_test_acc = evaluate(model, subclass_test_loader, device='cuda')
+            avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device='cuda')
+            create_confusion_matrix(confusion_matrix_data, subclass)
+            
             subclass_results[subclass] = {'loss': avg_test_loss, 'acc': avg_test_acc}
             
             os.system('rm -rf temp')
@@ -147,5 +197,4 @@ if __name__ == '__main__':
         # save results to a json file
         with open('subclass_results.json', 'w') as f:
             json.dump(subclass_results, f)        
-        
         
