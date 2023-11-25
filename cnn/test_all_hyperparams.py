@@ -29,7 +29,7 @@ def test_all_hyperparams():
     """
 
     param_grid = {
-        'lr': [0.00001, 0.0001, 0.001, 0.01, 'schedule'],
+        'lr': [0.00001, 0.0001, 0.001, 0.01],
         'batch_size': [16, 32, 64],
         'epochs': [10, 30, 50],
         'weight_decay': [0.0001, 0.001, 0.01],

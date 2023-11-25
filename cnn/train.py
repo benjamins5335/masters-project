@@ -62,9 +62,6 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
         else:
             print('model.pth not found. Training from scratch.')
 
-    if lr == 'schedule':
-        scheduler = optim.lr_scheduler.ReduceLROnPlateau(
-            optimizer, patience=5, factor=0.1, verbose=True)
 
     for epoch in range(num_epochs):
         print(f'Epoch: {epoch + 1}/{num_epochs}')
@@ -92,9 +89,6 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
         val_loss, val_acc, _ = evaluate(model, val_loader, device)
         val_loss_history.append(val_loss)
         val_acc_history.append(val_acc)
-        
-        if lr == 'schedule':
-            scheduler.step(val_loss)
         
         
         print(f'Train loss: {train_loss / len(train_loader.dataset)}')
