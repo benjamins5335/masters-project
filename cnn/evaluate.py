@@ -109,11 +109,13 @@ if __name__ == '__main__':
     # Add arguments
     parser.add_argument('--eval_whole_set', action='store_true', help='Evaluate the whole dataset')
     parser.add_argument('--eval_subclasses', action='store_true', help='Evaluate subclasses')
+    parser.add_argument('--model_path', type=str, help='Path to the model')
 
     # Parse the arguments
     args = parser.parse_args()
     eval_whole_set = args.eval_whole_set
     eval_subclasses = args.eval_subclasses
+    model_path = args.model_path
     
     if not eval_whole_set and not eval_subclasses:
         eval_whole_set = True
@@ -130,7 +132,7 @@ if __name__ == '__main__':
         test_ds = ImageFolder(root='data/test', transform=data_transforms)
         test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
         model = BinaryClassifier()
-        model.load_state_dict(torch.load('model.pth', map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
+        model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
         model.to('cuda')  # Move the model to GPU
         model.eval()
         avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
@@ -177,7 +179,7 @@ if __name__ == '__main__':
             subclass_test_loader = DataLoader(subclass_test_ds, batch_size=BATCH_SIZE, shuffle=False)
             
             model = BinaryClassifier()
-            model.load_state_dict(torch.load('model.pth'))
+            model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
             model.to('cuda')
             model.eval()
             
