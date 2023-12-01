@@ -7,17 +7,19 @@ from collections import defaultdict
 
 
 def downsample_and_save(file_path, img, width, height):
-    crop_size = min(width, height)
+    
+    crop_size = min(width, height) # dimensions of the smallest side
+    
+    # crop
     left = (width - crop_size) // 2
     right = left + crop_size
     top = (height - crop_size) // 2
     bottom = top + crop_size
-    
     img = img[top:bottom, left:right]
     
-    img = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR)
-    
-    cv2.imwrite(file_path, img)
+    # downsample and save
+    img = cv2.resize(img, (96, 96), interpolation=cv2.INTER_LINEAR) 
+    cv2.imwrite(file_path, img) 
     
     
     
@@ -121,21 +123,17 @@ def write_1000_real(input_dir, output_dir, number_to_download):
             number_to_download_class = number_to_download[dir]
             
 
-            files = os.listdir(os.path.join(input_dir, dir))
+            files = os.listdir(os.path.join(input_dir, dir)) 
             for file in files:
-                # print(f'Processing {file}...')
                 if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
                     input_file_path = os.path.join(input_dir, dir, file)
                     output_file_path = os.path.join(output_dir, dir, file)                      
                     
-
                     synset_id = file.split('_')[0]
                     if number_to_download_class[synset_id] > 0:
                         img = cv2.imread(input_file_path)
                         height, width = img.shape[:2]
                         if width >= 96 or height >= 96:
-                            # stop = input('Press enter to continue...')
-
                             number_to_download_class[synset_id] -= 1
                             downsample_and_save(output_file_path, img, width, height)
                             print(f'Saved {output_file_path}')
@@ -143,9 +141,6 @@ def write_1000_real(input_dir, output_dir, number_to_download):
                             print(f'{input_file_path} is too small. Skipping...')
                             
 def separate_into_train_and_test(split_percentage):
-
-        
-        
     print('Separating into train and test...')
     for root, dirs, files in os.walk('../data/real'):
         for dir in dirs:
