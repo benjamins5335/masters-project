@@ -1,3 +1,4 @@
+import json
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -139,17 +140,24 @@ if __name__ == '__main__':
     if not os.path.exists('plots'):
         os.makedirs('plots')
         
-
-        
     # Add arguments
     parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
 
     # Parse the arguments
     args = parser.parse_args()
     continue_training = args.continue_training
-    BATCH_SIZE = 16
-    NUM_EPOCHS = 10
-    LEARNING_RATE = 0.0001
+    with open('config.json') as f:
+        config = json.load(f)
+    
+    batch_size = config['batch_size']
+    num_epochs = config['num_epochs']
+    learning_rate = config['learning_rate']
+    weight_decay = config['weight_decay']
+    dropout = config['dropout']
+    
+    key = (learning_rate, batch_size, num_epochs, weight_decay, dropout)
+    model_file_name = str(key).replace(' ', '').replace('(', '').replace(')', '').replace(',', '_')
+                        
 
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
@@ -164,8 +172,8 @@ if __name__ == '__main__':
     val_size = len(train_ds) - train_size
     train_ds, val_ds = torch.utils.data.random_split(train_ds, [train_size, val_size])
 
-    train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, shuffle=True)
-    val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False)
+    train_loader = DataLoader(train_ds, batch_size=batch_size, shuffle=True)
+    val_loader = DataLoader(val_ds, batch_size=batch_size, shuffle=False)
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Initialize model
@@ -174,14 +182,32 @@ if __name__ == '__main__':
     # Train the model
     train_loss_history, train_acc_history, val_loss_history, val_acc_history = train(
         model,
+        model_file_name,
         train_loader,
         val_loader,
-        num_epochs=NUM_EPOCHS,
-        lr=LEARNING_RATE,
+        num_epochs=num_epochs,
+        lr=learning_rate,
         device=device,
         continue_training=continue_training
     )
     
-    plot_results(NUM_EPOCHS, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
+    plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
     
+    with open('results.json') as f:
+        data = json.load(f)
+        # write new data to the file
+    data[model_file_name] = {
+        'lr': learning_rate,
+        'batch_size': batch_size,
+        'epochs': num_epochs,
+        'weight_decay': weight_decay,
+        'dropout': dropout,
+        'train_loss_history': train_loss_history,
+        'train_acc_history': train_acc_history,
+        'val_loss_history': val_loss_history,
+        'val_acc_history': val_acc_history
+    }
     
+    with open('results.json', 'w') as f:
+        json.dump(data, f, indent=2)
+
