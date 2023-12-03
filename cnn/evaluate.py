@@ -117,11 +117,11 @@ if __name__ == '__main__':
     eval_subclasses = args.eval_subclasses
     model_path = args.model_path
     
+    batch_size = int(model_path.split('_')[1])
+    
     if not eval_whole_set and not eval_subclasses:
         eval_whole_set = True
 
-    
-    BATCH_SIZE = 16
 
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
@@ -130,7 +130,7 @@ if __name__ == '__main__':
     
     if eval_whole_set:
         test_ds = ImageFolder(root='data/test', transform=data_transforms)
-        test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False)
+        test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
         model = BinaryClassifier()
         model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
         model.to('cuda')  # Move the model to GPU
@@ -176,7 +176,7 @@ if __name__ == '__main__':
             
             
             # subclass_test_ds = ImageFolder(root=f'data/test/{subclass}', transform=data_transforms)
-            subclass_test_loader = DataLoader(subclass_test_ds, batch_size=BATCH_SIZE, shuffle=False)
+            subclass_test_loader = DataLoader(subclass_test_ds, batch_size=batch_size, shuffle=False)
             
             model = BinaryClassifier()
             model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
