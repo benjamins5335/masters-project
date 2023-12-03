@@ -26,6 +26,7 @@ class BinaryClassifier(nn.Module):
             nn.ReLU(),
             nn.Dropout(p=dropout),
             nn.Linear(128, 1),
+            nn.Sigmoid()
         )
 
     
