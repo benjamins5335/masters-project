@@ -8,17 +8,7 @@ from torch.utils.data import DataLoader
 
 from models.binary_classifier import BinaryClassifier
 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
-from models.binary_classifier import BinaryClassifier
-from PIL import Image
-
 import json
-import sys
 import os
 import argparse
 import plotly.figure_factory as ff
@@ -109,32 +99,44 @@ if __name__ == '__main__':
     # Add arguments
     parser.add_argument('--eval_whole_set', action='store_true', help='Evaluate the whole dataset')
     parser.add_argument('--eval_subclasses', action='store_true', help='Evaluate subclasses')
+    parser.add_argument('--eval_unseen', action='store_true', help='Evaluate unseen classes')
     parser.add_argument('--model_path', type=str, help='Path to the model')
 
     # Parse the arguments
     args = parser.parse_args()
     eval_whole_set = args.eval_whole_set
     eval_subclasses = args.eval_subclasses
+    eval_unseen = args.eval_unseen
     model_path = args.model_path
     
-    batch_size = int(model_path.split('_')[1])
     
-    if not eval_whole_set and not eval_subclasses:
-        eval_whole_set = True
+    batch_size = int(model_path.split('_')[len(model_path.split('_')) - 4])
 
+    if not eval_whole_set and not eval_subclasses and not eval_unseen:
+        eval_whole_set = True
 
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
     
+    if "resnet18" in model_path:
+        pretrained_model = True
+        model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+        model.fc = nn.Linear(model.fc.in_features, 1)  
+    else:
+        pretrained_model = False
+        model = BinaryClassifier()
+        
+    model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
+    model.to('cuda')  
+    model.eval()
+    
+
     if eval_whole_set:
         test_ds = ImageFolder(root='data/test', transform=data_transforms)
         test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
-        model = BinaryClassifier()
-        model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
-        model.to('cuda')  # Move the model to GPU
-        model.eval()
+
         avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
         
         print(f'Test loss: {avg_test_loss:.4f}')
@@ -177,12 +179,7 @@ if __name__ == '__main__':
             
             # subclass_test_ds = ImageFolder(root=f'data/test/{subclass}', transform=data_transforms)
             subclass_test_loader = DataLoader(subclass_test_ds, batch_size=batch_size, shuffle=False)
-            
-            model = BinaryClassifier()
-            model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
-            model.to('cuda')
-            model.eval()
-            
+
             avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device='cuda')
             create_confusion_matrix(confusion_matrix_data, subclass)
             
@@ -199,4 +196,19 @@ if __name__ == '__main__':
         # save results to a json file
         with open('subclass_results.json', 'w') as f:
             json.dump(subclass_results, f)        
+        
+    if eval_unseen:
+        for model_name in os.listdir('models'):
+            model_path = f'models/{model_name}'
+            print(f'Evaluating {model_path}...')
+        
+            test_ds = ImageFolder(root='inference_images_processed', transform=data_transforms)
+            test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
+
+            avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
+            
+            print(f'Test loss: {avg_test_loss:.4f}')
+            print(f'Test accuracy: {avg_test_acc:.4f}')
+            
+            create_confusion_matrix(confusion_matrix_data, 'unseen')
         

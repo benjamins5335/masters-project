@@ -2,30 +2,18 @@ import json
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 import torchvision.models as models
-from torch.utils.data import DataLoader
 
 from models.binary_classifier import BinaryClassifier
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
-from models.binary_classifier import BinaryClassifier
-from PIL import Image
 
 # import evaluate.py
 from evaluate import evaluate
 import os
 import argparse
 import plotly.graph_objects as go
-from sklearn.model_selection import GridSearchCV
-
-
 
 def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.0001, weight_decay=0.0, device='cuda', continue_training=False):
     """
@@ -42,7 +30,11 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
     None
     """
     
-
+    if 'resnet18' in model_file_name:
+        model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
+        
+        num_features = model.fc.in_features
+        model.fc = nn.Linear(num_features, 1)
     
     # Set device
     model = model.to(device)
@@ -106,6 +98,7 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
     return train_loss_history, train_acc_history, val_loss_history, val_acc_history
 
 
+
 def plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history):
     """
     Plots the training and validation loss and accuracy for each epoch.
@@ -142,10 +135,15 @@ if __name__ == '__main__':
         
     # Add arguments
     parser.add_argument('--continue_training', action='store_true', help='Continue training from a saved model')
+    parser.add_argument('--use_pretrained', type=str, help='Use a pretrained model')
+
 
     # Parse the arguments
     args = parser.parse_args()
     continue_training = args.continue_training
+    pretrained_model = args.use_pretrained
+    
+    
     with open('config.json') as f:
         config = json.load(f)
     
@@ -157,6 +155,9 @@ if __name__ == '__main__':
     
     key = (learning_rate, batch_size, num_epochs, weight_decay, dropout)
     model_file_name = str(key).replace(' ', '').replace('(', '').replace(')', '').replace(',', '_')
+    
+    if pretrained_model:
+        model_file_name = pretrained_model + '_' + model_file_name
                         
 
     data_transforms = transforms.Compose([
