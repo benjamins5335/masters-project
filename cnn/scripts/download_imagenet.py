@@ -56,4 +56,4 @@ def download_all():
 
 if __name__ == '__main__':
     # download_all()
-    download_wnid('n02129604', '../data/real/cat')
+    download_wnid('n03467517', '../inference_images/real')

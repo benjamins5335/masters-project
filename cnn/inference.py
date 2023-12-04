@@ -1,3 +1,4 @@
+import os
 import cv2
 import torch
 import torch.nn as nn
@@ -24,7 +25,7 @@ import numpy as np
 
 
 
-def inference_cnn(image):
+def inference_individual(image):
     """
     Loads a trained convolutional neural network and performs inference on a
     single image.
@@ -58,6 +59,32 @@ def inference_cnn(image):
     print(predicted)
     return predicted
 
+def mass_inference(path_to_folder):
+
+    # get list of real and fake images
+    real_images = os.listdir(f'{path_to_folder}/real')
+    fake_images = os.listdir(f'{path_to_folder}/fake')
+    
+    for image in real_images:
+        image_raw = Image.open(f'{path_to_folder}/real/{image}')
+        predicted = inference_individual(image_raw)
+        
+        if predicted < 0.5:
+            num_correct += 1
+        num_total += 1
+    
+    for image in fake_images:
+        image_raw = Image.open(f'{path_to_folder}/fake/{image}')
+        predicted = inference_individual(image_raw)
+        
+        if predicted >= 0.5:
+            num_correct += 1
+        num_total += 1
+    
+    return num_correct, num_total
+
+
+
 def downsample(img, width, height):
     crop_size = min(width, height)
     left = (width - crop_size) // 2
@@ -71,6 +98,7 @@ def downsample(img, width, height):
     
     return img
 
+
 if __name__ == "__main__":
     st.title("Binary Classifier Inference App")
 
@@ -83,7 +111,7 @@ if __name__ == "__main__":
         image_raw = Image.open(uploaded_file)
         
         # Perform inference and display result#
-        predicted = inference_cnn(image_raw)
+        predicted = inference_individual(image_raw)
         print(predicted)
         if predicted < 0.5:
             st.write("This is a fake image!")
