@@ -36,7 +36,7 @@ def inference_individual(image):
     
     # Load model
     model = BinaryClassifier()
-    model.load_state_dict(torch.load('models/0.001_64_30_0.001_0.4.pth'))
+    model.load_state_dict(torch.load('models/0.001_16_10_0.0001_0.4.pth'))
     model.eval()
     
     # Convert PIL image to numpy array (assuming image is in RGB mode)
@@ -53,36 +53,13 @@ def inference_individual(image):
     
     # Perform inference
     image_tensor = data_transforms(downsampled_image).unsqueeze(0)
-    output = model(image_tensor)
-    predicted = torch.sigmoid(output).item()
+    with torch.no_grad():
+        output = model(image_tensor)
+        
+    predicted = torch.sigmoid(output)
     
     print(predicted)
     return predicted
-
-def mass_inference(path_to_folder):
-
-    # get list of real and fake images
-    real_images = os.listdir(f'{path_to_folder}/real')
-    fake_images = os.listdir(f'{path_to_folder}/fake')
-    
-    for image in real_images:
-        image_raw = Image.open(f'{path_to_folder}/real/{image}')
-        predicted = inference_individual(image_raw)
-        
-        if predicted < 0.5:
-            num_correct += 1
-        num_total += 1
-    
-    for image in fake_images:
-        image_raw = Image.open(f'{path_to_folder}/fake/{image}')
-        predicted = inference_individual(image_raw)
-        
-        if predicted >= 0.5:
-            num_correct += 1
-        num_total += 1
-    
-    return num_correct, num_total
-
 
 
 def downsample(img, width, height):
@@ -108,12 +85,16 @@ if __name__ == "__main__":
 
     if uploaded_file is not None:
         # Display the uploaded image
-        image_raw = Image.open(uploaded_file)
+        image_raw = Image.open(uploaded_file).convert('RGB')
+        st.image(image_raw, width=400)
+        
+
         
         # Perform inference and display result#
         predicted = inference_individual(image_raw)
-        print(predicted)
         if predicted < 0.5:
-            st.write("This is a fake image!")
+            probablility = 1 - predicted
+            st.header("I am {:.2%} sure that this is a fake image!".format(probablility.item()))
         else:
-            st.write("This is a real image!")
+            st.header("I am {:.2%} sure that this is a real image!".format(predicted.item()))
+
