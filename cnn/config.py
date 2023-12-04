@@ -1,1 +1,0 @@
-# hyperparameters for the CNN model
