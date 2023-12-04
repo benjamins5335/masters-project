@@ -180,3 +180,5 @@ cnn/stable_diffusion_container/data
 
 data_bup
 data_bup_copy
+
+inference_images
