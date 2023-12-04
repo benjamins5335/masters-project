@@ -217,13 +217,31 @@ if __name__ == "__main__":
     # parser.add_argument('base_path', type=str, help='Path to the base directory containing images to process.', default='../data_raw')
     # args = parser.parse_args()
     
-    input_dir = '../data_raw'
-    output_dir = '../data'
+    # input_dir = '../inference_images'
+    # output_dir = '../inference_images_processed'
     
-    number_to_download = choose_1000_real(input_dir)
-    write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
-    write_1000_fake(input_dir + "/fake", output_dir + "/fake")
-    separate_into_train_and_test(0.8)
+    # write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
+    # write_1000_fake(input_dir + "/fake", output_dir + "/fake")
+    # separate_into_train_and_test(0.8)
     
     
+    # write a block of code that takes every image in input_dir and downsamples it to 96x96 and saves it to output_dir
+    # for root, dirs, files in os.walk(input_dir):
+    #     for dir in dirs:
+    #         if not os.path.exists(os.path.join(output_dir, dir)):
+    #             os.mkdir(os.path.join(output_dir, dir))
+        
+    #         files = os.listdir(os.path.join(input_dir, dir))
+    #         for file in files:
+    #             if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
+    #                 input_file_path = os.path.join(input_dir, dir, file)
+    #                 output_file_path = os.path.join(output_dir, dir, file)                      
+                    
+    #                 img = cv2.imread(input_file_path)
+    #                 height, width = img.shape[:2]
+    #                 if width >= 96 or height >= 96:
+    #                     downsample_and_save(output_file_path, img, width, height)
+    #                     print(f'Saved {output_file_path}')
+    #                 else:
+    #                     print(f'{input_file_path} is too small. Skipping...')
 
