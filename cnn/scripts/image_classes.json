@@ -290,5 +290,22 @@
         "variations": [
             "on rock","on leaf","on ground","on tree","on branch","on grass","on sand","side","above"
         ]
+    },
+    {
+        "class":"guitar",
+        "wnids": [
+            {
+                "description":"electric guitar",
+                "wnid":"n03272010"
+            },
+            {
+                "description":"acoustic guitar",
+                "wnid":"n02676566"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "being played","on stand","on floor","on stage","on wall","being held by human","side","above"
+        ]
     }
 ]

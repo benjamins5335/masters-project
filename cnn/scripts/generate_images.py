@@ -82,7 +82,7 @@ def generate_all_images():
 
 
 def generate_image_from_class(chosen_class):
-    all_prompts = json.load(open("image_classes.json"))
+    all_prompts = json.load(open("scripts/image_classes.json"))
     valid_classes = [item['class'] for item in all_prompts]
     if chosen_class not in valid_classes:
         raise ValueError(f"Invalid class name. Valid class names are: {valid_classes}")
@@ -97,7 +97,7 @@ def generate_image_from_class(chosen_class):
 
     pipe.enable_xformers_memory_efficient_attention()
     
-    images_per_subclass = 1000
+    images_per_subclass = 2000
     total_images = -1
     
     for class_obj in all_prompts:
@@ -111,12 +111,18 @@ def generate_image_from_class(chosen_class):
             total_subclasses = len(subclasses)
             total_images = total_subclasses * images_per_subclass
             
-            class_folder = Path(f"data/fake/{chosen_class}")
+            class_folder = Path(f"inference_images_2/fake/{chosen_class}")
             class_folder.mkdir(parents=True, exist_ok=True)
             
         
             for count in range(total_images):
-                subclass_index = count // images_per_subclass
+                if count < 1639:
+                    subclass_index = 0
+                elif count < 3656:
+                    subclass_index = 1
+                else:
+                    # exit
+                    break
                 subclass = subclasses[subclass_index]
                 prompt = image_prompt.format(subclass) + ", " + random.choice(variations)
                 image_filename = f"{chosen_class}_{count}.JPEG"

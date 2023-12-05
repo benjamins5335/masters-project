@@ -170,6 +170,7 @@ cnn/data_copy/
 cnn/data_raw/
 cnn/plots/*.png
 cnn/inference_images
+cnn/inference_images_2
 cnn/inference_images_raw_bup
 cnn/config.json
 
