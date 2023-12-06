@@ -1,29 +1,11 @@
 import os
 import cv2
 import torch
-import torch.nn as nn
-import torch.optim as optim
 import torchvision.transforms as transforms
-from torchvision.datasets import ImageFolder
-import torchvision.models as models
-from torch.utils.data import DataLoader
-
 from models.binary_classifier import BinaryClassifier
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
-from models.binary_classifier import BinaryClassifier
-from PIL import Image
-
 import streamlit as st
-
 import numpy as np
-
-
+from PIL import Image
 
 def inference_individual(image):
     """
@@ -36,7 +18,7 @@ def inference_individual(image):
     
     # Load model
     model = BinaryClassifier()
-    model.load_state_dict(torch.load('models/0.001_16_10_0.0001_0.4.pth'))
+    model.load_state_dict(torch.load('models/0.001_32_50_0.001_0.4.pth'))
     model.eval()
     
     # Convert PIL image to numpy array (assuming image is in RGB mode)
@@ -82,13 +64,10 @@ if __name__ == "__main__":
     # File uploader widget that accepts only jpg, jpeg, and png extensions
     uploaded_file = st.file_uploader("Choose an image...", type=["jpg", "jpeg", "png"])
     
-
     if uploaded_file is not None:
         # Display the uploaded image
         image_raw = Image.open(uploaded_file).convert('RGB')
         st.image(image_raw, width=400)
-        
-
         
         # Perform inference and display result#
         predicted = inference_individual(image_raw)
