@@ -198,17 +198,13 @@ if __name__ == '__main__':
             json.dump(subclass_results, f)        
         
     if eval_unseen:
-        for model_name in os.listdir('models'):
-            model_path = f'models/{model_name}'
-            print(f'Evaluating {model_path}...')
-        
-            test_ds = ImageFolder(root='inference_images_processed', transform=data_transforms)
-            test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
+        test_ds = ImageFolder(root='unseen', transform=data_transforms)
+        test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
-            avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
-            
-            print(f'Test loss: {avg_test_loss:.4f}')
-            print(f'Test accuracy: {avg_test_acc:.4f}')
-            
-            create_confusion_matrix(confusion_matrix_data, 'unseen')
+        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
+        
+        print(f'Test loss: {avg_test_loss:.4f}')
+        print(f'Test accuracy: {avg_test_acc:.4f}')
+        
+        create_confusion_matrix(confusion_matrix_data, 'unseen')
         
