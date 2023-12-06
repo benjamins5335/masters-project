@@ -15,8 +15,10 @@ class BinaryClassifier(nn.Module):
             nn.ReLU(),
             nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
+            # nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
+            # nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Dropout(p=dropout),
             
@@ -25,16 +27,29 @@ class BinaryClassifier(nn.Module):
             nn.ReLU(),
             nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
+            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
+            nn.MaxPool2d(kernel_size=2, stride=2),
+            nn.Dropout(p=dropout),
+            
+            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
+            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
+            nn.ReLU(),
+            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
+            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
+            # nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2),
             nn.Dropout(p=dropout),
 
             nn.Flatten(),
-            nn.Linear(64 * 24 * 24, 128),  # adjusted for 96x96 input images
+            nn.Linear(128 * 12 * 12, 128),
             nn.ReLU(),
             nn.Dropout(p=dropout),
-            nn.Linear(128, 1),
+            nn.Linear(128, 1)
         )
 
     
