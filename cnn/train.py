@@ -194,7 +194,7 @@ if __name__ == '__main__':
     
     plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
     
-    with open('results.json') as f:
+    with open('plots/results.json') as f:
         data = json.load(f)
         # write new data to the file
     data[model_file_name] = {
@@ -209,6 +209,6 @@ if __name__ == '__main__':
         'val_acc_history': val_acc_history
     }
     
-    with open('results.json', 'w') as f:
+    with open('plots/results.json', 'w') as f:
         json.dump(data, f, indent=2)
 

@@ -12,8 +12,8 @@ def read_json(json_file):
         data = json.load(f)
     return data
 
-def download_wnid(wnid, class_folder):
-    
+
+def download_wnid(wnid, class_folder):    
     print("Downloading '{}' for class '{}'".format(wnid, class_folder))
     
     url = base_url.format(wnid)

@@ -97,16 +97,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Evaluate a trained model.")
     
     # Add arguments
-    parser.add_argument('--eval_whole_set', action='store_true', help='Evaluate the whole dataset')
-    parser.add_argument('--eval_subclasses', action='store_true', help='Evaluate subclasses')
-    parser.add_argument('--eval_unseen', action='store_true', help='Evaluate unseen classes')
+    parser.add_argument('--whole_set', action='store_true', help='Evaluate the whole dataset')
+    parser.add_argument('--subclasses', action='store_true', help='Evaluate subclasses')
+    parser.add_argument('--unseen', action='store_true', help='Evaluate unseen classes')
     parser.add_argument('--model_path', type=str, help='Path to the model')
 
     # Parse the arguments
     args = parser.parse_args()
-    eval_whole_set = args.eval_whole_set
-    eval_subclasses = args.eval_subclasses
-    eval_unseen = args.eval_unseen
+    eval_whole_set = args.whole_set
+    eval_subclasses = args.subclasses
+    eval_unseen = args.unseen
     model_path = args.model_path
     
     
