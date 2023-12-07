@@ -16,20 +16,27 @@ import argparse
 import plotly.graph_objects as go
 
 def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.0001, weight_decay=0.0, device='cuda', continue_training=False):
-    """
-    Trains a convolutional neural network on a binary classification task.
+    """Trains the model.
 
     Args:
-    - model: The model to be trained
-    - train_loader: DataLoader for training data
-    - num_epochs: Number of training epochs
-    - lr: Learning rate for the optimizer
-    - device: Device to use for training ('cuda' or 'cpu')
+        model (pytorch model): The model to train.
+        model_file_name (str): Model name determined by the hyperparameters.
+        train_loader (DataLoader): The data loader for the training data.
+        val_loader (DataLoader): The data loader for the validation data.
+        num_epochs (int, optional): Number of epochs to run the model for. Defaults to 10.
+        lr (float, optional): Learning rate. Defaults to 0.0001.
+        weight_decay (float, optional): Weight decay. Defaults to 0.0.
+        device (str, optional): Device to use for training. Defaults to 'cuda'.
+        continue_training (bool, optional): Allows user to continue training previously saved model. Defaults to False.
 
     Returns:
-    None
+        train_loss_history (list): List containing the training loss for each epoch.
+        train_acc_history (list): List containing the training accuracy for each epoch.
+        val_loss_history (list): List containing the validation loss for each epoch.
+        val_acc_history (list): List containing the validation accuracy for each epoch.
     """
-    
+
+    # uses ResNet18 weights if pretrained model is used
     if 'resnet18' in model_file_name:
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         
@@ -48,6 +55,7 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
     val_loss_history = []
     val_acc_history = []
     
+    # loads previous model if continue_training is True
     if continue_training:
         if os.path.isfile('{}.pth'.format(model_file_name)):
             print('pth file found. Loading model.')
@@ -98,21 +106,17 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
     return train_loss_history, train_acc_history, val_loss_history, val_acc_history
 
 
-
 def plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history):
-    """
-    Plots the training and validation loss and accuracy for each epoch.
+    """Plots the training and validation loss and accuracy.
 
     Args:
-    - num_epochs: Number of epochs
-    - train_loss_history: List containing the training loss for each epoch
-    - train_acc_history: List containing the training accuracy for each epoch
-    - val_loss_history: List containing the validation loss for each epoch
-    - val_acc_history: List containing the validation accuracy for each epoch
-
-    Returns:
-    None
+        num_epochs (int): Number of epochs the model was trained for.
+        train_loss_history (list): List containing the training loss for each epoch.
+        train_acc_history (list): List containing the training accuracy for each epoch.
+        val_loss_history (list): List containing the validation loss for each epoch.
+        val_acc_history (list): List containing the validation accuracy for each epoch.
     """
+
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=train_loss_history, mode='lines+markers', name='Training Loss'))
     fig.add_trace(go.Scatter(x=list(range(1, num_epochs + 1)), y=val_loss_history, mode='lines+markers', name='Validation Loss'))
@@ -153,9 +157,11 @@ if __name__ == '__main__':
     weight_decay = config['weight_decay']
     dropout = config['dropout']
     
+    # generates model name using hyperparameters
     key = (learning_rate, batch_size, num_epochs, weight_decay, dropout)
     model_file_name = str(key).replace(' ', '').replace('(', '').replace(')', '').replace(',', '_')
     
+    # appends pretrained model name to model name if needed
     if pretrained_model:
         model_file_name = pretrained_model + '_' + model_file_name
                         
@@ -166,9 +172,7 @@ if __name__ == '__main__':
     ])
 
     train_ds = ImageFolder(root='data/train', transform=data_transforms)
-    
-    
-    # split the training data into training and validation
+        
     train_size = int(0.8 * len(train_ds))
     val_size = len(train_ds) - train_size
     train_ds, val_ds = torch.utils.data.random_split(train_ds, [train_size, val_size])
@@ -196,7 +200,7 @@ if __name__ == '__main__':
     
     with open('plots/results.json') as f:
         data = json.load(f)
-        # write new data to the file
+
     data[model_file_name] = {
         'lr': learning_rate,
         'batch_size': batch_size,

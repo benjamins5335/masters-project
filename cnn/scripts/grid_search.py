@@ -1,26 +1,14 @@
 from train import train, plot_results
 from evaluate import evaluate
 import os
-
-import torch
-
-import torchvision.transforms as transforms
-from torchvision.datasets import ImageFolder
-from torch.utils.data import DataLoader
-
-from models.binary_classifier import BinaryClassifier
-
-import torch
-import torch.nn as nn
-import torch.optim as optim
-import torchvision.transforms as transforms
-from torch.utils.data import DataLoader
-from torchvision.datasets import ImageFolder
-from models.binary_classifier import BinaryClassifier
-
 import json
 
+import torch
+import torchvision.transforms as transforms
+from torchvision.datasets import ImageFolder
+from torch.utils.data import DataLoader
 
+from models.binary_classifier import BinaryClassifier
 
 
 def test_all_hyperparams():
@@ -28,6 +16,7 @@ def test_all_hyperparams():
     Test all hyperparameters for the CNN model.
     """
 
+    # define the hyperparameter grid
     param_grid = {
         'lr': [0.00001, 0.0001, 0.001, 0.01],
         'batch_size': [16, 32, 64],
@@ -36,6 +25,7 @@ def test_all_hyperparams():
         'dropout': [0.0, 0.2, 0.4]
     }
     
+    # standard ImageNet normalization values
     data_transforms = transforms.Compose([
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
@@ -53,7 +43,8 @@ def test_all_hyperparams():
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     results = {}
-        
+    
+    # nested for loops to test all hyperparameters
     for lr in param_grid['lr']:
         for batch_size in param_grid['batch_size']:
             for epochs in param_grid['epochs']:
@@ -87,6 +78,7 @@ def test_all_hyperparams():
                         
                         avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device=device)
                          
+                        # create dictionary storing all results and save to results.json
                         results[model_file_name] = {
                             'lr': lr,
                             'batch_size': batch_size,
@@ -104,6 +96,7 @@ def test_all_hyperparams():
                         
                         with open ("results.json", "w") as f:
                             json.dump(results, f, indent=2)
+
 
 if __name__ == '__main__':
     test_all_hyperparams()

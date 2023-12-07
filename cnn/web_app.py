@@ -8,12 +8,13 @@ import numpy as np
 from PIL import Image
 
 def inference_individual(image):
-    """
-    Loads a trained convolutional neural network and performs inference on a
-    single image.
+    """Performs inference on a single image.
+
+    Args:
+        image (Image): The image to perform inference on.
 
     Returns:
-    None
+        float: Sigmoid output of the model's prediction.
     """
     
     # Load model
@@ -40,11 +41,20 @@ def inference_individual(image):
         
     predicted = torch.sigmoid(output)
     
-    print(predicted)
     return predicted
 
 
 def downsample(img, width, height):
+    """Downsamples the image to a square image of size (width, height).
+
+    Args:
+        img (np.ndarray): The image to downsample.
+        width (int): The width of the downsampled image.
+        height (int): The height of the downsampled image.
+
+    Returns:
+        np.ndarray: The downsampled image.
+    """
     crop_size = min(width, height)
     left = (width - crop_size) // 2
     right = left + crop_size
@@ -58,7 +68,10 @@ def downsample(img, width, height):
     return img
 
 
-if __name__ == "__main__":
+def streamlit_app():
+    """Creates the web app using Streamlit.
+    """
+    
     st.title("Binary Classifier Inference App")
 
     # File uploader widget that accepts only jpg, jpeg, and png extensions
@@ -77,3 +90,7 @@ if __name__ == "__main__":
         else:
             st.header("I am {:.2%} sure that this is a real image!".format(predicted.item()))
 
+
+
+if __name__ == "__main__":
+    streamlit_app()

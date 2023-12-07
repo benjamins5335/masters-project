@@ -13,40 +13,17 @@ class BinaryClassifier(nn.Module):
         self.model = nn.Sequential(
             nn.Conv2d(3, 32, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            # nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            # nn.ReLU(),
-            # nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            # nn.ReLU(),
-            # nn.Conv2d(32, 32, kernel_size=3, stride=1, padding=1),
-            # nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2), # 96*96 -> 48*48
             nn.Dropout(p=dropout),
             
-                
             nn.Conv2d(32, 64, kernel_size=3, stride=1, padding=1),
             nn.ReLU(),
-            nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            # nn.ReLU(),
-            # nn.Conv2d(64, 64, kernel_size=3, stride=1, padding=1),
-            # nn.ReLU(),
             nn.MaxPool2d(kernel_size=2, stride=2), # 48*48 -> 24*24
-            nn.Dropout(p=dropout),
-            
-            
-            nn.Conv2d(64, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.Conv2d(128, 128, kernel_size=3, stride=1, padding=1),
-            nn.ReLU(),
-            nn.MaxPool2d(kernel_size=2, stride=2), # 24*24 -> 12*12
             nn.Dropout(p=dropout),
 
             nn.Flatten(),
-            # nn.Linear(64 * 24 * 24, 128),
-            nn.Linear(128 * 12 * 12, 128),
+            nn.Linear(64 * 24 * 24, 128),
+            # nn.Linear(128 * 12 * 12, 128),
             nn.ReLU(),
             nn.Dropout(p=dropout),
             nn.Linear(128, 1)

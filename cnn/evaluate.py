@@ -14,17 +14,19 @@ import argparse
 import plotly.figure_factory as ff
 
 def evaluate(model, data_loader, device='cuda'):
-    """
-    Evaluates a model on a given dataset.
+    """Evaluate the model on various datasets.
 
     Args:
-    - model: The model to be evaluated
-    - data_loader: DataLoader for the evaluation data
-    - device: Device to use for evaluation ('cuda' or 'cpu')
+        model (pth model): The model to evaluate.
+        data_loader (DataLoader): The data loader to use.
+        device (str, optional): Specify CPU if necessary. Defaults to 'cuda'.
 
     Returns:
-    None
+        avg_test_loss (float): The average test loss.
+        avg_test_acc (float): The average test accuracy.
+        confusion_matrix_data (2d-array): The confusion matrix data.
     """
+
     model.eval()
     loss_fn = nn.BCEWithLogitsLoss()
     test_loss = 0
@@ -64,31 +66,27 @@ def evaluate(model, data_loader, device='cuda'):
 
 
 def create_confusion_matrix(results, name):
-    """
-    Creates a confusion matrix for the model's predictions on the test set. Part 
-    of this code was learnt from: 
-    https://stackoverflow.com/questions/60860121/plotly-how-to-make-an-annotated-confusion-matrix-using-a-heatmap
-    
-    Args:
-    - results: A 2d-array of the model's predictions on the test set.
-    
+    """Create a confusion matrix from the results.
 
+    Args:
+        results (2d-array): The results from the evaluate function.
+        name (str): Description of the confusion matrix (e.g., 'whole_set', 'unseen', 'dog', 'cat', etc.)
     """
+
+    # Restrcuture the results to be in the correct format for the matrix
     classes = ['Real', 'Fake']
     x = classes
     y = classes[::-1]
     z = results[::-1]
     
-    # example for z: [[1, 2], [3, 4]]
-    # have 1 in top left, 2 in top right, 3 in bottom left, 4 in bottom right
+    # Convert all values to strings
     z_text = [[str(y) for y in x] for x in z]
     
     
     fig = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z_text, colorscale='Viridis')
-    
     fig.update_layout(title='Confusion Matrix', xaxis_title='Actual', yaxis_title='Predicted')
-    
     fig.write_image(f'plots/{name}_confusion_matrix.png')
+
 
 if __name__ == '__main__':
     if not os.path.exists('plots'):
@@ -109,9 +107,10 @@ if __name__ == '__main__':
     eval_unseen = args.unseen
     model_path = args.model_path
     
-    
+    # pull batch size from model path
     batch_size = int(model_path.split('_')[len(model_path.split('_')) - 4])
 
+    # run whole set evaluation if no arguments are passed
     if not eval_whole_set and not eval_subclasses and not eval_unseen:
         eval_whole_set = True
 
@@ -120,6 +119,8 @@ if __name__ == '__main__':
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
     
+    # load resnet model if the model path contains resnet18
+    # use custom model otherwise
     if "resnet18" in model_path:
         pretrained_model = True
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
@@ -144,10 +145,7 @@ if __name__ == '__main__':
         
         create_confusion_matrix(confusion_matrix_data, 'whole_set')
         
-        
-
-
-
+    
     if eval_subclasses:
         subclasses = os.listdir('data/test/fake')
         subclass_results = {}

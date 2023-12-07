@@ -1,6 +1,9 @@
 import json
 
-if __name__ == '__main__':
+
+def print_sorted():
+    """Prints the results in results.json in descending order of the final validation accuracy
+    """
     data = json.load(open('results.json'))
     
     # Create a list of tuples where each tuple contains the key and final val_acc
@@ -11,19 +14,6 @@ if __name__ == '__main__':
     
     for key, val_acc in val_acc_list:
         print(key, val_acc)
-    
-    # for every key in data
-    # remove 'avg_test_loss', 'avg_test_acc', 'confusion_matrix_data', 'accuracy' if present
-    # for key in data:
-    #     if 'avg_test_loss' in data[key]:
-    #         del data[key]['avg_test_loss']
-    #     if 'avg_test_acc' in data[key]:
-    #         del data[key]['avg_test_acc']
-    #     if 'confusion_matrix_data' in data[key]:
-    #         del data[key]['confusion_matrix_data']
-    #     if 'accuracy' in data[key]:
-    #         del data[key]['accuracy']
-        
-    # # save the new data
-    # with open ("results.json", "w") as f:
-    #     json.dump(data, f, indent=2)
+
+if __name__ == '__main__':
+    print_sorted()

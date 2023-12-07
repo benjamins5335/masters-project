@@ -1,16 +1,20 @@
 import random
 import cv2
 import os
-import argparse
-import time
-from collections import defaultdict
 
 
 def downsample_and_save(file_path, img, width, height):
-    
+    """Deterministically downsamples the image to 96x96 and saves it to the given file path
+
+    Args:
+        file_path (str): Path to save the image to
+        img (image): Image to downsample
+        width (int): Width of the image
+        height (int): Height of the image
+    """
     crop_size = min(width, height) # dimensions of the smallest side
     
-    # crop
+    # crop the image
     left = (width - crop_size) // 2
     right = left + crop_size
     top = (height - crop_size) // 2
@@ -24,17 +28,18 @@ def downsample_and_save(file_path, img, width, height):
     
     
 def write_1000_fake(input_dir, output_dir):
-    
+    """Writes 1000 fake images to the given output directory
+
+    Args:
+        input_dir (str): Path to the directory containing the images to be downsampled
+        output_dir (str): Path to the directory to save the downsampled images to
+    """
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
         
     print(f'Processing images in {input_dir}...')
     
     for root, dirs, files in os.walk(input_dir):
-        print(root)
-        print(dirs)
-        print(files[:10])
-        
         for file in files:
             # get current dir
             subclass = root.split('/')[-1]
@@ -42,7 +47,8 @@ def write_1000_fake(input_dir, output_dir):
             # create dir if it doesn't exist
             if not os.path.exists(os.path.join(output_dir, subclass)):
                 os.mkdir(os.path.join(output_dir, subclass))
-                
+            
+            # only images
             if file.endswith('.JPEG') or file.endswith('.jpg') or file.endswith('.png') or file.endswith('.jpeg'):
                 
                 input_file_path = os.path.join(root, file)
@@ -51,27 +57,34 @@ def write_1000_fake(input_dir, output_dir):
                 img = cv2.imread(input_file_path)
                 
                 height, width = img.shape[:2]
-                if width >= 96 or height >= 96:
+                if width >= 96 or height >= 96: # check if image is already 96x96
                     downsample_and_save(output_file_path, img, width, height)
                     print(f'Saved {output_file_path}')
 
-               
-
 
 def choose_1000_real(base_path):
+    """Chooses 1000 real images from each class
+
+    Args:
+        base_path (str): Path to the directory containing the real images
+
+    Returns:
+        dict: Dictionary containing the number of images to download for each subclass
+    """
     print('Choosing 1000 real images...')
     
     number_to_download = {}
     for root, dirs, files in os.walk(base_path + '/real'):
-        for dir in dirs:
+        for dir in dirs: # for each class: cat, dog, etc.
             print(f'Processing {dir}...')
             real_images = {}
             total_deficit = 0
 
             # iterate through every file in dir
             files = os.listdir(os.path.join(root, dir))
+            
+            # count number of images for each synset_id
             for file in files:
-                # print(f'Processing {file}...')
                 if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
                     synset_id = file.split('_')[0]
                     if synset_id not in real_images:
@@ -79,7 +92,9 @@ def choose_1000_real(base_path):
                     else:
                         real_images[synset_id] += 1
                 
+                
             # check if all values are greater than 1000 in real_images
+            # if not, the deficit is calculated
             if all(value > 1000 for value in real_images.values()):
                 number_to_download_class = {}
                 for key, value in real_images.items():
@@ -93,7 +108,7 @@ def choose_1000_real(base_path):
                         number_to_download_class[key] = value
                         total_deficit += 1000 - value
                 
-            
+            # images are 'borrowed' from other classes to make up for the deficit
             for key, value in real_images.items():
                 if value - 1000 > total_deficit and total_deficit > 0:
                     number_to_download_class[key] = 1000 + total_deficit
@@ -104,13 +119,17 @@ def choose_1000_real(base_path):
                     dir: number_to_download_class
                 }
             )
-            
-    print(number_to_download)
-    
+                
     return number_to_download
 
 def write_1000_real(input_dir, output_dir, number_to_download):
-    
+    """Writes 1000 real images to the given output directory
+
+    Args:
+        input_dir (str): Path to the directory containing the images to be downsampled
+        output_dir (str): Path to the directory to save the downsampled images to
+        number_to_download (dict): Dictionary containing the number of images to download for each subclass
+    """
     if not os.path.exists(output_dir):
         os.mkdir(output_dir)
 
@@ -122,7 +141,6 @@ def write_1000_real(input_dir, output_dir, number_to_download):
                 os.mkdir(os.path.join(output_dir, dir))
             number_to_download_class = number_to_download[dir]
             
-
             files = os.listdir(os.path.join(input_dir, dir)) 
             for file in files:
                 if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
@@ -140,7 +158,14 @@ def write_1000_real(input_dir, output_dir, number_to_download):
                         else:
                             print(f'{input_file_path} is too small. Skipping...')
                             
+                            
 def separate_into_train_and_test(split_percentage):
+    """Helper function to separate the images into train and test
+
+    Args:
+        split_percentage (float): Percentage of images to be used for training.
+            The rest will be used for testing.
+    """
     print('Separating into train and test...')
     for root, dirs, files in os.walk('../data/real'):
         for dir in dirs:
@@ -157,7 +182,6 @@ def separate_into_train_and_test(split_percentage):
             
             train_size = int(split_percentage * len(files))
             test_size = len(files) - train_size
-            print(files[:10])
             
             count = 0
             for file in files: 
@@ -169,14 +193,12 @@ def separate_into_train_and_test(split_percentage):
                 old_path = os.path.join(root, dir, file)
                 new_path = os.path.join("../data", mode, "real", dir, file)
                 
-                
-                
                 os.rename(old_path, new_path)
                 print(f'Moved {new_path}')
                 count += 1
                 
 
-                
+    # do the same for fake images
     for root, dirs, files in os.walk('../data/fake'):
         for dir in dirs:
             print(f'Processing {dir}...')
@@ -192,7 +214,6 @@ def separate_into_train_and_test(split_percentage):
             
             train_size = int(split_percentage * len(files))
             test_size = len(files) - train_size
-            print(files[:10])
             
             count = 0
             for file in files: 
@@ -204,8 +225,7 @@ def separate_into_train_and_test(split_percentage):
                 old_path = os.path.join(root, dir, file)
                 new_path = os.path.join("../data", mode, "fake", dir, file)
                 
-                
-                
+            
                 os.rename(old_path, new_path)
                 print(f'Moved {new_path}')
                 count += 1
@@ -213,12 +233,9 @@ def separate_into_train_and_test(split_percentage):
             
 if __name__ == "__main__":
     print('Starting preprocessing...')
-    # parser = argparse.ArgumentParser(description='Process images in a directory.')
-    # parser.add_argument('base_path', type=str, help='Path to the base directory containing images to process.', default='../data_raw')
-    # args = parser.parse_args()
     
-    input_dir = 'unseen_bup'
-    output_dir = 'unseen'
+    input_dir = 'data_raw'
+    output_dir = 'data'
     os.makedirs(output_dir, exist_ok=True)
     
     # write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
@@ -226,24 +243,4 @@ if __name__ == "__main__":
     # separate_into_train_and_test(0.8)
     
     
-    # write a block of code that takes every image in input_dir and downsamples it to 96x96 and saves it to output_dir
-    for root, dirs, files in os.walk(input_dir):
-        print(root)
-        for dir in dirs:
-            if not os.path.exists(os.path.join(output_dir, dir)):
-                os.mkdir(os.path.join(output_dir, dir))
-        
-            files = os.listdir(os.path.join(input_dir, dir))
-            for file in files:
-                if file.lower().endswith(('.jpeg', '.jpg', '.png', '.JPEG')):
-                    input_file_path = os.path.join(input_dir, dir, file)
-                    output_file_path = os.path.join(output_dir, dir, file)                      
-                    
-                    img = cv2.imread(input_file_path)
-                    height, width = img.shape[:2]
-                    if width >= 96 or height >= 96:
-                        downsample_and_save(output_file_path, img, width, height)
-                        print(f'Saved {output_file_path}')
-                    else:
-                        print(f'{input_file_path} is too small. Skipping...')
 
