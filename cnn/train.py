@@ -99,9 +99,10 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
         print()
 
 
-    # Save model
-    torch.save(model.state_dict(), 'models/{}.pth'.format(model_file_name))
+    counter = 0
+    model_file_name = str(val_acc_history[-1])[:6] + '_' + model_file_name
     
+    torch.save(model.state_dict(), 'models/{}.pth'.format(model_file_name))
 
     return train_loss_history, train_acc_history, val_loss_history, val_acc_history
 
