@@ -11,18 +11,18 @@ from torch.utils.data import DataLoader
 from models.binary_classifier import BinaryClassifier
 
 
-def test_all_hyperparams():
+def grid_search():
     """
     Test all hyperparameters for the CNN model.
     """
 
     # define the hyperparameter grid
     param_grid = {
-        'lr': [0.00001, 0.0001, 0.001, 0.01],
-        'batch_size': [16, 32, 64],
-        'epochs': [10, 30, 50],
-        'weight_decay': [0.0001, 0.001, 0.01],
-        'dropout': [0.0, 0.2, 0.4]
+        'lr': [0.00001, 0.0001, 0.001],
+        'batch_size': [32],
+        'epochs': [50],
+        'weight_decay': [0.001, 0.01],
+        'dropout': [0.4, 0.5]
     }
     
     # standard ImageNet normalization values
@@ -94,9 +94,9 @@ def test_all_hyperparams():
                             'confusion_matrix_data': confusion_matrix_data
                         }
                         
-                        with open ("results.json", "w") as f:
+                        with open ("plots/results.json", "w") as f:
                             json.dump(results, f, indent=2)
 
 
 if __name__ == '__main__':
-    test_all_hyperparams()
+    grid_search()
