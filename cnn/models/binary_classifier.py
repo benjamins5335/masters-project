@@ -26,8 +26,7 @@ class BinaryClassifier(nn.Module):
             nn.Dropout(p=dropout),
 
             nn.Flatten(),
-            nn.Linear(64 * 24 * 24, 128),
-            # nn.Linear(128 * 12 * 12, 128),
+            nn.Linear(24 * 24 * 64, 128),
             nn.ReLU(),
             nn.Dropout(p=dropout),
             nn.Linear(128, 1)

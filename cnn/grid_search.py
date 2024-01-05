@@ -18,11 +18,11 @@ def grid_search():
 
     # define the hyperparameter grid
     param_grid = {
-        'lr': [0.00001, 0.0001, 0.001],
+        'lr': [0.0001],
         'batch_size': [32],
         'epochs': [50],
-        'weight_decay': [0.001, 0.01],
-        'dropout': [0.4, 0.5]
+        'weight_decay': [0, 0.001, 0.01],
+        'dropout': [.65]
     }
     
     # standard ImageNet normalization values
