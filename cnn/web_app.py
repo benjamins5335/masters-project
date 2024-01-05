@@ -19,7 +19,7 @@ def inference_individual(image):
     
     # Load model
     model = BinaryClassifier()
-    model.load_state_dict(torch.load('models/0.001_32_50_0.001_0.4.pth'))
+    model.load_state_dict(torch.load('models/model.pth'))
     model.eval()
     
     # Convert PIL image to numpy array (assuming image is in RGB mode)
