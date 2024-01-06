@@ -1,0 +1,11 @@
+Subclass,True Positives,False Positives,False Negatives,True Negatives
+cat,986,19,14,981
+primate,985,16,15,984
+spider,970,14,30,986
+snake,976,10,24,990
+bird,975,23,25,977
+dog,993,4,7,996
+ship,984,24,16,976
+crab,993,7,7,993
+car,990,10,10,990
+beetle,983,32,17,968
