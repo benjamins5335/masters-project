@@ -83,7 +83,7 @@ def create_confusion_matrix(results, name):
     z_text = [[str(y) for y in x] for x in z]
     
     
-    fig = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z_text, colorscale='Viridis')
+    fig = ff.create_annotated_heatmap(z, x=x, y=y, annotation_text=z_text, colorscale='gray')  # Change colorscale to 'gray'
     fig.update_layout(title='Confusion Matrix', xaxis_title='Actual', yaxis_title='Predicted')
     fig.write_image(f'plots/{name}_confusion_matrix.png')
 
@@ -107,8 +107,11 @@ if __name__ == '__main__':
     eval_unseen = args.unseen
     model_path = args.model_path
     
-    # pull batch size from model path
-    batch_size = int(model_path.split('_')[len(model_path.split('_')) - 4])
+    # try pull batch size from model path and default to 32 if it doesn't exist
+    try:
+        batch_size = int(model_path.split('_')[len(model_path.split('_')) - 4])
+    except Exception:
+        batch_size = 32
 
     # run whole set evaluation if no arguments are passed
     if not eval_whole_set and not eval_subclasses and not eval_unseen:
