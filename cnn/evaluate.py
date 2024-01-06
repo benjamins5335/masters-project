@@ -65,6 +65,17 @@ def evaluate(model, data_loader, device='cuda'):
     return avg_test_loss, avg_test_acc, confusion_matrix_data
 
 
+def write_confusion_matrix_data_to_csv(confusion_matrix_data, name):
+    """Write the confusion matrix data to a csv file.
+
+    Args:
+        confusion_matrix_data (2d-array): The confusion matrix data.
+    """
+    
+    with open('plots/confusion_matrix_data.csv', 'a') as f:
+        f.write('{},{},{},{},{}\n'.format(name, confusion_matrix_data[0][0], confusion_matrix_data[0][1], confusion_matrix_data[1][0], confusion_matrix_data[1][1]))
+
+
 def create_confusion_matrix(results, name):
     """Create a confusion matrix from the results.
 
@@ -153,6 +164,11 @@ if __name__ == '__main__':
         subclasses = os.listdir('data/test/fake')
         subclass_results = {}
         
+        # intialize csv file 
+        with open('plots/confusion_matrix_data.csv', 'w') as f:
+            f.write("Subclass,True Positives,False Positives,False Negatives,True Negatives\n")
+    
+        
         for subclass in subclasses:
             # delete temp folder if it exists
             if os.path.exists('temp'):
@@ -183,6 +199,7 @@ if __name__ == '__main__':
 
             avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device='cuda')
             create_confusion_matrix(confusion_matrix_data, subclass)
+            write_confusion_matrix_data_to_csv(confusion_matrix_data, subclass)
             
             subclass_results[subclass] = {'loss': avg_test_loss, 'acc': avg_test_acc}
             
