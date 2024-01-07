@@ -167,21 +167,19 @@ def separate_into_train_and_test(split_percentage):
             The rest will be used for testing.
     """
     print('Separating into train and test...')
-    for root, dirs, files in os.walk('../data/real'):
+    for root, dirs, files in os.walk('data/real'):
         for dir in dirs:
             print(f'Processing {dir}...')
-            if not os.path.exists(os.path.join('../data', 'train', 'real', dir)):
-                os.makedirs(os.path.join('../data', 'train', 'real', dir), exist_ok=True)
-            if not os.path.exists(os.path.join('../data', 'test', 'real', dir)):
-                os.makedirs(os.path.join('../data', 'test', 'real', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('data', 'train', 'real', dir)):
+                os.makedirs(os.path.join('data', 'train', 'real', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('data', 'test', 'real', dir)):
+                os.makedirs(os.path.join('data', 'test', 'real', dir), exist_ok=True)
         
                 
             files = os.listdir(os.path.join(root, dir))
             
             random.shuffle(files)
-            
-            train_size = int(split_percentage * len(files))
-            test_size = len(files) - train_size
+
             
             count = 0
             for file in files: 
@@ -191,7 +189,7 @@ def separate_into_train_and_test(split_percentage):
                     mode = 'test'
                         
                 old_path = os.path.join(root, dir, file)
-                new_path = os.path.join("../data", mode, "real", dir, file)
+                new_path = os.path.join("data", mode, "real", dir, file)
                 
                 os.rename(old_path, new_path)
                 print(f'Moved {new_path}')
@@ -199,21 +197,18 @@ def separate_into_train_and_test(split_percentage):
                 
 
     # do the same for fake images
-    for root, dirs, files in os.walk('../data/fake'):
+    for root, dirs, files in os.walk('data/fake'):
         for dir in dirs:
             print(f'Processing {dir}...')
-            if not os.path.exists(os.path.join('../data', 'train', 'fake', dir)):
-                os.makedirs(os.path.join('../data', 'train', 'fake', dir), exist_ok=True)
-            if not os.path.exists(os.path.join('../data', 'test', 'fake', dir)):
-                os.makedirs(os.path.join('../data', 'test', 'fake', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('data', 'train', 'fake', dir)):
+                os.makedirs(os.path.join('data', 'train', 'fake', dir), exist_ok=True)
+            if not os.path.exists(os.path.join('data', 'test', 'fake', dir)):
+                os.makedirs(os.path.join('data', 'test', 'fake', dir), exist_ok=True)
         
                 
             files = os.listdir(os.path.join(root, dir))
             
             random.shuffle(files)
-            
-            train_size = int(split_percentage * len(files))
-            test_size = len(files) - train_size
             
             count = 0
             for file in files: 
@@ -223,7 +218,7 @@ def separate_into_train_and_test(split_percentage):
                     mode = 'test'
                         
                 old_path = os.path.join(root, dir, file)
-                new_path = os.path.join("../data", mode, "fake", dir, file)
+                new_path = os.path.join("data", mode, "fake", dir, file)
                 
             
                 os.rename(old_path, new_path)
@@ -238,9 +233,10 @@ if __name__ == "__main__":
     output_dir = 'data'
     os.makedirs(output_dir, exist_ok=True)
     
-    # write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
-    # write_1000_fake(input_dir + "/fake", output_dir + "/fake")
-    # separate_into_train_and_test(0.8)
+    number_to_download = choose_1000_real(input_dir)
+    write_1000_real(input_dir + "/real", output_dir + "/real", number_to_download)
+    write_1000_fake(input_dir + "/fake", output_dir + "/fake")
+    separate_into_train_and_test(0.8)
     
     
 

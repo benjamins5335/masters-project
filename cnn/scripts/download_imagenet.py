@@ -4,7 +4,7 @@ import json
 import os
 
 BASE_URL = 'https://image-net.org/data/winter21_whole/{}.tar'
-BASE_PATH = '../data/real'
+BASE_PATH = 'data_raw/real'
 
 
 def read_json(json_file):
@@ -49,9 +49,8 @@ def download_wnid(wnid, class_folder):
 def download_all():
     """Function to download all synsets outlined in imagenet_classes.json
     """
-    data = read_json('imagenet_classes.json')
-    if not os.path.exists(BASE_PATH):
-        os.mkdir(BASE_PATH)
+    data = read_json('scripts/image_classes.json')
+    os.makedirs(BASE_PATH, exist_ok=True)
         
     
     for item in data:
@@ -59,11 +58,10 @@ def download_all():
         class_folder = os.path.join(BASE_PATH, class_name)
         wnids = item['wnids']
         
-        if not os.path.exists(class_folder):
-            os.mkdir(class_folder)
+        os.makedirs(class_folder, exist_ok=True)
             
-        for wnid in wnids:
-            download_wnid(wnid, class_folder)
+        for subclass in wnids:
+            download_wnid(subclass['wnid'], class_folder)
 
     print("Done")
                

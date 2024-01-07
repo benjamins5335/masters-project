@@ -1,6 +1,7 @@
 import json
 from pathlib import Path
 import random
+import sys
 from diffusers import StableDiffusionXLPipeline
 import torch
 import argparse
@@ -32,8 +33,8 @@ def generate_image(pipe, prompt):
 def generate_all_images():   
     """Function to generate all images outlined by the subclasses in image_classes.json
     """
-    all_prompts = json.load(open("image_classes.json"))
-        
+    all_prompts = json.load(open("scripts/image_classes.json"))
+
     pipe = StableDiffusionXLPipeline.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", 
         torch_dtype=torch.float16, 
@@ -53,11 +54,11 @@ def generate_all_images():
         subclasses = [item['description'] for item in class_obj['wnids']] # list of subclass names
         
         # create folder for class in ../data/fake if it doesn't exist
-        class_folder = Path(f"../data/fake/{image_class}")
+        class_folder = Path(f"data_raw/fake/{image_class}")
         class_folder.mkdir(parents=True, exist_ok=True)
     
         for subclass in subclasses:
-            for i in range(images_per_subclass):
+            for _ in range(images_per_subclass):
                 prompt = image_prompt.format(subclass) + ", " + random.choice(variations)
                 image_filename = f"{image_class}_{count}.JPEG"
                 image_path = class_folder / image_filename
@@ -112,7 +113,7 @@ def generate_image_from_class(chosen_class):
             total_subclasses = len(subclasses)
             total_images = total_subclasses * images_per_subclass
 
-            class_folder = Path(f"data/fake/{chosen_class}")
+            class_folder = Path(f"data_raw/fake/{chosen_class}")
             class_folder.mkdir(parents=True, exist_ok=True)
 
 
@@ -135,16 +136,12 @@ def generate_image_from_class(chosen_class):
 
 
 if __name__ == "__main__":
-    # Set up command-line argument parsing
-    parser = argparse.ArgumentParser(description="Generate images based on the specified class.")
-    parser.add_argument("class_name", type=str, help="Class name for image generation (e.g., 'dog', 'cat').")
-    
-    # Parse command-line arguments
-    args = parser.parse_args()
 
-    try:
-        # Use the provided class name
-        generate_image_from_class(args.class_name)
-    except ValueError as e:
-        print(e)
+    if len(sys.argv) == 1:
+        generate_all_images()
+    else:
+        class_name = sys.argv[1]
+
+        generate_image_from_class(class_name)
+
     
