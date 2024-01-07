@@ -143,7 +143,7 @@ if __name__ == '__main__':
     
     # load resnet model if the model path contains resnet18
     # use custom model otherwise
-    if "resnet18" in model_path:
+    if "resnet" in model_path:
         pretrained_model = True
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         model.fc = nn.Linear(model.fc.in_features, 1)  
