@@ -11,6 +11,9 @@ cnn/stable_diffusion_container/data
 
 .venv
 
+cnn/plots/*.png
+
+
 data_bup
 data_bup_copy
 unseen_bup
