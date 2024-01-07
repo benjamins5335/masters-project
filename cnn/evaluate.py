@@ -1,6 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.optim as optim
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 import torchvision.models as models
@@ -12,6 +11,7 @@ import json
 import os
 import argparse
 import plotly.figure_factory as ff
+
 
 def evaluate(model, data_loader, device='cuda'):
     """Evaluate the model on various datasets.

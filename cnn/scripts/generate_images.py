@@ -3,7 +3,6 @@ from pathlib import Path
 import random
 from diffusers import StableDiffusionXLPipeline
 import torch
-from PIL import Image
 import argparse
 
 

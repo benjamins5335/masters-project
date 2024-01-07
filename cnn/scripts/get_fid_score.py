@@ -1,6 +1,7 @@
 import torch
 from pytorch_fid import fid_score
 
+
 def get_fid_score():
     """
     Calculates FID score between 2 datasets

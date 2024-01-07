@@ -9,7 +9,6 @@ import torchvision.models as models
 
 from models.binary_classifier import BinaryClassifier
 
-# import evaluate.py
 from evaluate import evaluate
 import os
 import argparse

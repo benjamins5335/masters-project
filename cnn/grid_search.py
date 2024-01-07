@@ -1,14 +1,14 @@
-from train import train, plot_results
-from evaluate import evaluate
-import os
-import json
-
 import torch
 import torchvision.transforms as transforms
 from torchvision.datasets import ImageFolder
 from torch.utils.data import DataLoader
 
 from models.binary_classifier import BinaryClassifier
+
+from train import train, plot_results
+from evaluate import evaluate
+import os
+import json
 
 
 def grid_search():

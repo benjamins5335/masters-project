@@ -1,7 +1,6 @@
 import tarfile
 import requests
 import json
-import cv2
 import os
 
 BASE_URL = 'https://image-net.org/data/winter21_whole/{}.tar'

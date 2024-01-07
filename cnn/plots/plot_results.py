@@ -1,7 +1,6 @@
 import sys
 sys.path.append('..')
 from train import plot_results
-from evaluate import create_confusion_matrix
 import json
 
 
