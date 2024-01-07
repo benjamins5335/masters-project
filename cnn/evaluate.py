@@ -192,9 +192,6 @@ if __name__ == '__main__':
                 
             # create a new ImageFolder for the subclass
             subclass_test_ds = ImageFolder(root=f'temp', transform=data_transforms)
-            
-            
-            # subclass_test_ds = ImageFolder(root=f'data/test/{subclass}', transform=data_transforms)
             subclass_test_loader = DataLoader(subclass_test_ds, batch_size=batch_size, shuffle=False)
 
             avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device='cuda')
