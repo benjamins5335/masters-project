@@ -144,7 +144,8 @@ if __name__ == '__main__':
         model = BinaryClassifier()
         
     model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
-    model.to('cuda')  
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    model.to(device)  
     model.eval()
     
 
@@ -152,7 +153,7 @@ if __name__ == '__main__':
         test_ds = ImageFolder(root='data/test', transform=data_transforms)
         test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
-        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
+        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device)
         
         print(f'Test loss: {avg_test_loss:.4f}')
         print(f'Test accuracy: {avg_test_acc:.4f}')
@@ -194,7 +195,7 @@ if __name__ == '__main__':
             subclass_test_ds = ImageFolder(root=f'temp', transform=data_transforms)
             subclass_test_loader = DataLoader(subclass_test_ds, batch_size=batch_size, shuffle=False)
 
-            avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device='cuda')
+            avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, subclass_test_loader, device)
             create_confusion_matrix(confusion_matrix_data, subclass)
             write_confusion_matrix_data_to_csv(confusion_matrix_data, subclass)
             
