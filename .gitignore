@@ -8,8 +8,6 @@ __pycache__/
 raw_image_data/
 cnn/scripts/test.jpeg
 cnn/stable_diffusion_container/data
-*.pth
-!model.pth
 
 .venv
 
