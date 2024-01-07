@@ -1,3 +1,4 @@
+
 import os
 import cv2
 import torch
@@ -6,6 +7,7 @@ from models.binary_classifier import BinaryClassifier
 import streamlit as st
 import numpy as np
 from PIL import Image
+
 
 def inference_individual(image):
     """Performs inference on a single image.
@@ -19,7 +21,7 @@ def inference_individual(image):
     
     # Load model
     model = BinaryClassifier()
-    model.load_state_dict(torch.load('models/model.pth'))
+    model.load_state_dict(torch.load('models/model.pth', map_location=torch.device('cpu')))
     model.eval()
     
     # Convert PIL image to numpy array (assuming image is in RGB mode)
@@ -80,9 +82,16 @@ def streamlit_app():
     if uploaded_file is not None:
         # Display the uploaded image
         image_raw = Image.open(uploaded_file).convert('RGB')
-        st.image(image_raw, width=400)
+        width, height = image_raw.size
+        height_ratio = height / 400
         
-        # Perform inference and display result#
+        # st.image(image_raw, width=int(width / height_ratio))
+        
+        centre_column = st.columns([1,6,1])[1]
+        with centre_column:        
+            st.image(image_raw, width=int(width / height_ratio))     
+        
+        # Perform inference and display result
         predicted = inference_individual(image_raw)
         if predicted < 0.5:
             probablility = 1 - predicted
