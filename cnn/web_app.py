@@ -1,3 +1,5 @@
+
+import os
 import cv2
 import torch
 import torchvision.transforms as transforms
@@ -85,7 +87,7 @@ def streamlit_app():
         
         # st.image(image_raw, width=int(width / height_ratio))
         
-        centre_column = st.columns([1,6,1])[1]
+        centre_column = st.columns([1,3,1])[1]
         with centre_column:        
             st.image(image_raw, width=int(width / height_ratio))     
         
