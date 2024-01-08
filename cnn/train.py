@@ -198,8 +198,13 @@ if __name__ == '__main__':
     
     plot_results(num_epochs, train_loss_history, train_acc_history, val_loss_history, val_acc_history)
     
-    with open('plots/results.json') as f:
-        data = json.load(f)
+    # if plots/results.json exists, load it
+    
+    if os.path.exists('plots/results.json'):
+        with open('plots/results.json') as f:
+            data = json.load(f)
+    else:
+        data = {}
 
     data[model_file_name] = {
         'lr': learning_rate,
@@ -212,7 +217,7 @@ if __name__ == '__main__':
         'val_loss_history': val_loss_history,
         'val_acc_history': val_acc_history
     }
-    
+     
     with open('plots/results.json', 'w') as f:
         json.dump(data, f, indent=2)
 
