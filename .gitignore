@@ -8,11 +8,13 @@ __pycache__/
 raw_image_data/
 cnn/scripts/test.jpeg
 cnn/stable_diffusion_container/data
+cnn/plots/*.png
+cnn/models/*.pth
+!cnn/models/model.pth
+!cnn/models/resnet.pth
+cnn/subclass_results.json
 
 .venv
-
-cnn/plots/*.png
-
 
 data_bup
 data_bup_copy
