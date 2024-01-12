@@ -143,5 +143,3 @@ if __name__ == "__main__":
         class_name = sys.argv[1]
 
         generate_image_from_class(class_name)
-
-    
