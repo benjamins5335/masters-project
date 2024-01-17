@@ -135,6 +135,22 @@ def generate_image_from_class(chosen_class):
                 count += 1
 
 
+
+def generate_specific_image(prompt):
+    pipe = StableDiffusionXLPipeline.from_pretrained(
+        "stabilityai/stable-diffusion-xl-base-1.0", 
+        torch_dtype=torch.float16, 
+        variant="fp16", 
+        use_safetensors=True
+    ).to("cuda")
+    
+    pipe.enable_xformers_memory_efficient_attention()
+    
+    image = generate_image(pipe, prompt)
+    
+    return image
+
+
 if __name__ == "__main__":
 
     if len(sys.argv) == 1:
@@ -143,3 +159,4 @@ if __name__ == "__main__":
         class_name = sys.argv[1]
 
         generate_image_from_class(class_name)
+    
