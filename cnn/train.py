@@ -14,7 +14,7 @@ import os
 import argparse
 import plotly.graph_objects as go
 
-def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.0001, weight_decay=0.0, device='cuda', continue_training=False):
+def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.0001, device='cuda', continue_training=False):
     """Trains the model.
 
     Args:
@@ -24,7 +24,6 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
         val_loader (DataLoader): The data loader for the validation data.
         num_epochs (int, optional): Number of epochs to run the model for. Defaults to 10.
         lr (float, optional): Learning rate. Defaults to 0.0001.
-        weight_decay (float, optional): Weight decay. Defaults to 0.0.
         device (str, optional): Device to use for training. Defaults to 'cuda'.
         continue_training (bool, optional): Allows user to continue training previously saved model. Defaults to False.
 
@@ -36,7 +35,7 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
     """
 
     # uses ResNet18 weights if pretrained model is used
-    if 'resnet18' in model_file_name:
+    if 'resnet' in model_file_name:
         model = models.resnet18(weights=models.ResNet18_Weights.DEFAULT)
         
         num_features = model.fc.in_features
@@ -97,9 +96,6 @@ def train(model, model_file_name, train_loader, val_loader, num_epochs=10, lr=0.
         print(f'Validation accuracy: {val_acc}')
         print()
 
-
-    counter = 0
-    model_file_name = str(val_acc_history[-1])[:6] + '_' + model_file_name
     
     torch.save(model.state_dict(), 'models/{}.pth'.format(model_file_name))
 
@@ -154,16 +150,13 @@ if __name__ == '__main__':
     batch_size = config['batch_size']
     num_epochs = config['num_epochs']
     learning_rate = config['learning_rate']
-    weight_decay = config['weight_decay']
     dropout = config['dropout']
-    
-    # generates model name using hyperparameters
-    key = (learning_rate, batch_size, num_epochs, weight_decay, dropout)
-    model_file_name = str(key).replace(' ', '').replace('(', '').replace(')', '').replace(',', '_')
     
     # appends pretrained model name to model name if needed
     if pretrained_model:
-        model_file_name = pretrained_model + '_' + model_file_name
+        model_file_name = 'resnet'
+    else:
+        model_file_name = 'model'
                         
 
     data_transforms = transforms.Compose([
@@ -210,7 +203,6 @@ if __name__ == '__main__':
         'lr': learning_rate,
         'batch_size': batch_size,
         'epochs': num_epochs,
-        'weight_decay': weight_decay,
         'dropout': dropout,
         'train_loss_history': train_loss_history,
         'train_acc_history': train_acc_history,

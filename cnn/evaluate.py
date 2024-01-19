@@ -56,6 +56,12 @@ def evaluate(model, data_loader, device='cuda'):
         [true_positives, false_positives],
         [false_negatives, true_negatives]
     ]
+    
+    print(f'True positives: {true_positives}')
+    print(f'False positives: {false_positives}')
+    print(f'False negatives: {false_negatives}')
+    print(f'True negatives: {true_negatives}')
+    print()
         
 
     avg_test_loss = test_loss / len(data_loader.dataset)
@@ -172,9 +178,6 @@ if __name__ == '__main__':
     if eval_subclasses:
         subclasses = os.listdir('data/test/fake')
         subclass_results = {}
-        
-
-    
         
         for subclass in subclasses:
             # delete temp folder if it exists
