@@ -57,12 +57,6 @@ def evaluate(model, data_loader, device='cuda'):
         [false_negatives, true_negatives]
     ]
     
-    print(f'True positives: {true_positives}')
-    print(f'False positives: {false_positives}')
-    print(f'False negatives: {false_negatives}')
-    print(f'True negatives: {true_negatives}')
-    print()
-        
 
     avg_test_loss = test_loss / len(data_loader.dataset)
     avg_test_acc = test_acc / len(data_loader.dataset)
