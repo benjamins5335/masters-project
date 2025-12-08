@@ -49,7 +49,7 @@ def download_wnid(wnid, class_folder):
 def download_all():
     """Function to download all synsets outlined in imagenet_classes.json
     """
-    data = read_json('scripts/image_classes.json')
+    data = read_json('scripts/image_classes_new.json')
     os.makedirs(BASE_PATH, exist_ok=True)
         
     

@@ -19,4 +19,5 @@ cnn/subclass_results.json
 data_bup
 data_bup_copy
 unseen_bup
-
+cnn/unseen_raw/
+unseen_raw_bup

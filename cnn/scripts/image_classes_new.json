@@ -1,0 +1,61 @@
+[
+    {
+        "class":"fish",
+        "wnids": [
+            {
+                "description":"great white shark",
+                "wnid":"n01484850"
+            },
+            {
+                "description":"stingray",
+                "wnid":"n01498041"
+            },
+            {
+                "description":"goldfish",
+                "wnid":"n01443537"
+            },
+            {
+                "description":"sturgeon",
+                "wnid":"n02641379"
+            },
+            {
+                "description":"pufferfish",
+                "wnid":"n02655020"
+            }
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "swimming","eating","in water","side","above"
+        ]
+    },
+    {
+        "class":"rodent",
+        "wnids": [
+            {
+                "description":"hamster",
+                "wnid":"n02342885"
+            },
+            {
+                "description":"guinea pig",
+                "wnid":"n02364673"
+            },
+            {
+                "description":"fox squirrel",
+                "wnid":"n02356798"
+            },
+            {
+                "description":"marmot",
+                "wnid":"n02361337"
+            },
+            {
+                "description":"beaver",
+                "wnid":"n02363005"
+            }  
+        ],
+        "prompt": "A photo of a {}, real-life setting.",
+        "variations": [
+            "sleeping","eating","playing",
+            "inside","outside", "from side", "from back","moving"
+        ]
+    }
+]

@@ -26,25 +26,25 @@ def generate_image(pipe, prompt):
         num_inference_steps=40,
         negative_prompt=negative_prompt   
     ).images[0]
-        
+
     return image 
 
 
 def generate_all_images():   
     """Function to generate all images outlined by the subclasses in image_classes.json
     """
-    all_prompts = json.load(open("scripts/image_classes.json"))
+    all_prompts = json.load(open("scripts/image_classes_new.json"))
 
     pipe = StableDiffusionXLPipeline.from_pretrained(
         "stabilityai/stable-diffusion-xl-base-1.0", 
         torch_dtype=torch.float16, 
         variant="fp16", 
         use_safetensors=True
-    ).to("cuda")
+    ).to("mps")
 
-    pipe.enable_xformers_memory_efficient_attention() # improves performance
+    # pipe.enable_xformers_memory_efficient_attention() # improves performance
 
-    images_per_subclass = 5000
+    images_per_subclass = 200
     
     for class_obj in all_prompts: # for each class: dog, cat, etc.
         count = 0
@@ -58,17 +58,20 @@ def generate_all_images():
         class_folder.mkdir(parents=True, exist_ok=True)
     
         for subclass in subclasses:
+            print(f"Subclass: {subclass}")
             for _ in range(images_per_subclass):
                 prompt = image_prompt.format(subclass) + ", " + random.choice(variations)
                 image_filename = f"{image_class}_{count}.JPEG"
                 image_path = class_folder / image_filename
-                
+                print(f"Generating image subclass {subclass} using prompt: {prompt}")
                 # allows script to pick up where it left off if it crashes
                 if not image_path.exists():
+                    pass
                     image = generate_image(pipe, prompt)
                     # save to fake dataset found in ../data/fake/{name of class} as JPEG      
                     image.save(image_path)
                     print(f"Saved {image_filename} to {image_path}.")
+
                 else:
                     print(f"Skipping {image_filename} as it already exists.")
                 
@@ -85,9 +88,9 @@ def generate_image_from_class(chosen_class):
         ValueError: If the chosen class is not in the list of valid classes
     """
     all_prompts = json.load(open("scripts/image_classes.json"))
-    valid_classes = [item['class'] for item in all_prompts]
-    if chosen_class not in valid_classes:
-        raise ValueError(f"Invalid class name. Valid class names are: {valid_classes}")
+    # valid_classes = [item['class'] for item in all_prompts]
+    # if chosen_class not in valid_classes:
+    #     raise ValueError(f"Invalid class name. Valid class names are: {valid_classes}")
     
     
     pipe = StableDiffusionXLPipeline.from_pretrained(
@@ -95,15 +98,15 @@ def generate_image_from_class(chosen_class):
         torch_dtype=torch.float16, 
         variant="fp16", 
         use_safetensors=True
-    ).to("cuda")
+    ).to("mps")
 
-    pipe.enable_xformers_memory_efficient_attention()
+    # pipe.enable_xformers_memory_efficient_attention()
     
-    images_per_subclass = 5000
+    images_per_subclass = 1000
     total_images = -1
-    
+    print(f"Generating images for class: {chosen_class}")
     for class_obj in all_prompts:
-
+        print(f"Checking class: {class_obj['class']}")
         if chosen_class == class_obj["class"]:
 
             image_prompt = class_obj["prompt"]
@@ -120,6 +123,7 @@ def generate_image_from_class(chosen_class):
             for count in range(total_images):
                 subclass_index = count // images_per_subclass
                 subclass = subclasses[subclass_index]
+                print(f"Generating image {count + 1}/{total_images} for subclass: {subclass}")
                 prompt = image_prompt.format(subclass) + ", " + random.choice(variations)
                 image_filename = f"{chosen_class}_{count}.JPEG"
                 image_path = class_folder / image_filename
@@ -142,9 +146,9 @@ def generate_specific_image(prompt):
         torch_dtype=torch.float16, 
         variant="fp16", 
         use_safetensors=True
-    ).to("cuda")
+    ).to("mps")
     
-    pipe.enable_xformers_memory_efficient_attention()
+    # pipe.enable_xformers_memory_efficient_attention()
     
     image = generate_image(pipe, prompt)
     

@@ -13,13 +13,13 @@ import argparse
 import plotly.figure_factory as ff
 
 
-def evaluate(model, data_loader, device='cuda'):
+def evaluate(model, data_loader, device='mps'):
     """Evaluate the model on various datasets.
 
     Args:
         model (pth model): The model to evaluate.
         data_loader (DataLoader): The data loader to use.
-        device (str, optional): Specify CPU if necessary. Defaults to 'cuda'.
+        device (str, optional): Specify CPU if necessary. Defaults to 'mps'.
 
     Returns:
         avg_test_loss (float): The average test loss.
@@ -151,9 +151,17 @@ if __name__ == '__main__':
         pretrained_model = False
         model = BinaryClassifier()
         
-    model.load_state_dict(torch.load(model_path, map_location='cuda:0' if torch.cuda.is_available() else 'cpu'))
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    model.to(device)  
+    # prefer MPS on mac, fall back to CUDA then CPU
+    if torch.backends.mps.is_available() and torch.backends.mps.is_built():
+        # load to CPU first to avoid CUDA->MPS direct mapping issues, then move to mps
+        state_dict = torch.load(model_path, map_location='cpu')
+        model.load_state_dict(state_dict)
+        device = torch.device('mps')
+    else:
+        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+        model.load_state_dict(torch.load(model_path, map_location=device))
+
+    model.to(device) 
     model.eval()
     
 
@@ -216,13 +224,14 @@ if __name__ == '__main__':
             json.dump(subclass_results, f)        
         
     if eval_unseen:
-        test_ds = ImageFolder(root='unseen', transform=data_transforms)
+        print('Evaluating unseen classes (rodent)...')
+        test_ds = ImageFolder(root='unseen/rodent', transform=data_transforms)
         test_loader = DataLoader(test_ds, batch_size=batch_size, shuffle=False)
 
-        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='cuda')
+        avg_test_loss, avg_test_acc, confusion_matrix_data = evaluate(model, test_loader, device='mps')
         
         print(f'Test loss: {avg_test_loss:.4f}')
         print(f'Test accuracy: {avg_test_acc:.4f}')
         
-        create_confusion_matrix(confusion_matrix_data, 'unseen')
+        create_confusion_matrix(confusion_matrix_data, 'rodent-resnet')
         
